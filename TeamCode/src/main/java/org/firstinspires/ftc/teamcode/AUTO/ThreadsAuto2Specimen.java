@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name="Threads Auto 2 Specimen", group="Robot")
+@Autonomous(name = "Threads Auto 2 Specimen", group = "Robot")
 public class ThreadsAuto2Specimen extends LinearOpMode {
     private DcMotor LeftFront = null;
     private DcMotor LeftBack = null;
@@ -32,17 +32,8 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
     static final double WHEEL_DIAMETER = 10.4;
     static final double PULSES = 537.7;
     static final double PI = 3.1415;
-    static final double PULSES_PER_CM = PULSES/(WHEEL_DIAMETER*PI);
+    static final double PULSES_PER_CM = PULSES / (WHEEL_DIAMETER * PI);
     TouchSensor touchSensor;
-
-
-
-
-
-
-
-
-
 
 
     @Override
@@ -110,13 +101,7 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         waitForStart();
 
 
-
-
-
         // create a thread for first movement
-
-
-
 
 
         // start both threads
@@ -192,8 +177,8 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         driveSide(-0.6, 40);
 
     }
-    public void driveStraight(double driveSpeed, double distance)
-    {
+
+    public void driveStraight(double driveSpeed, double distance) {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -221,8 +206,8 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         RightBack.setPower(0);
         sleep(500);
     }
-    public void driveSide(double driveSpeed, double distance)
-    {
+
+    public void driveSide(double driveSpeed, double distance) {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -250,8 +235,8 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         RightBack.setPower(0);
         sleep(500);
     }
-    public void driveDiagonal(double driveSpeed, double distance)
-    {
+
+    public void driveDiagonal(double driveSpeed, double distance) {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -279,7 +264,8 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         RightBack.setPower(0);
         sleep(500);
     }
-    public void VerSliderPosition(double position, double power){
+
+    public void VerSliderPosition(double position, double power) {
         Vertical.setTargetPosition((int) position);
         Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Vertical.setPower(power);
@@ -290,7 +276,7 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         }
     }
 
-    public void VerSliderZero(double power){
+    public void VerSliderZero(double power) {
 
         while (opModeIsActive() && !touchSensor.isPressed()) {
             Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -305,8 +291,7 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
     }
 
 
-    public double getHeading()
-    {
+    public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
