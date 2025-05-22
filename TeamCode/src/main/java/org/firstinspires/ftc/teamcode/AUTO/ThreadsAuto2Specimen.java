@@ -57,7 +57,7 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.19);
+        VerRotate.setPosition(0.81);
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
         VerClaw.setPosition(1);
 
