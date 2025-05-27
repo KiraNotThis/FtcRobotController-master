@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -13,27 +14,10 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name="3 Specimen", group="Robot")
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
+
+@Autonomous(name = "3 Specimen", group = "Robot")
 public class Specimen3All extends LinearOpMode {
-    private DcMotor LeftFront = null;
-    private DcMotor LeftBack = null;
-    private DcMotor RightFront = null;
-    private DcMotor RightBack = null;
-    private DcMotor Vertical = null;
-    private DcMotor Horizontal = null;
-    private IMU imu;
-
-
-    private Servo VerRotate;
-    private Servo VerClaw;
-    private Servo HorRotate;
-    private Servo HorClaw;
-    static final double WHEEL_DIAMETER = 10.4;
-    static final double PULSES = 537.7;
-    static final double PI = 3.1415;
-    static final double PULSES_PER_CM = PULSES/(WHEEL_DIAMETER*PI);
-    TouchSensor touchVertical;
-    TouchSensor touchHorizontal;
 
     @Override
     public void runOpMode() {
@@ -81,18 +65,11 @@ public class Specimen3All extends LinearOpMode {
         Vertical.setDirection(DcMotor.Direction.FORWARD);
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
 
-        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoders();
 
         Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -162,7 +139,7 @@ public class Specimen3All extends LinearOpMode {
         VerRotate.setPosition(0.88);//rotate to put in the observation zone
         driveStraight(-0.8, 20, contstant_angle, 0, 1, 0.05);//Drive backwards
         VerClaw.setPosition(0.3);//to open
-        driveStraight(-0.8, 5, contstant_angle+15, 0, 1, 0.05);
+        driveStraight(-0.8, 5, contstant_angle + 15, 0, 1, 0.05);
 
 
         //GO TO OBSERVATION 1st
@@ -228,7 +205,7 @@ public class Specimen3All extends LinearOpMode {
         VerRotate.setPosition(0.11);//rotate to chamber
 
         //GO TO THE CHAMBER 3
-        Thread sliderMiddle3 = new Thread(() -> verticalUp(-1500, -0.9)) ;
+        Thread sliderMiddle3 = new Thread(() -> verticalUp(-1500, -0.9));
         Thread driveFifth = new Thread(() -> {
             driveStraight(1, 7, contstant_angle, 0, 0.5, 0.05);
             driveSide(-1, 97, contstant_angle, 500, 0.5, 0.05);
@@ -256,30 +233,33 @@ public class Specimen3All extends LinearOpMode {
 
     }
 
-    //______________________________*Straight_________________________________//
-    /**
-     * Moves the robot forward while maintaining direction using IMU.
-     * Supports acceleration, deceleration, and configurable IMU correction.
-     *
-     * @param driveSpeed The maximum driving speed (0.0 - 1.0).
-     * @param distance The target distance to travel in centimeters.
-     * @param startAngle The initial IMU heading to maintain.
-     * @param rampUpTime Time in milliseconds for acceleration (0 disables acceleration).
-     * @param slowdownStartFactor The fraction of the total distance where deceleration starts (1.0 disables deceleration).
-     * @param kP The proportional correction factor for IMU drift.
-     */
-    public void driveStraight(double driveSpeed, double distance, double startAngle, double rampUpTime, double slowdownStartFactor, double kP) {
-        // Reset encoders before starting movement
+    private void encoders() {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Set motors to run using encoders
         LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    //______________________________*Straight_________________________________//
+
+    /**
+     * Moves the robot forward while maintaining direction using IMU.
+     * Supports acceleration, deceleration, and configurable IMU correction.
+     *
+     * @param driveSpeed          The maximum driving speed (0.0 - 1.0).
+     * @param distance            The target distance to travel in centimeters.
+     * @param startAngle          The initial IMU heading to maintain.
+     * @param rampUpTime          Time in milliseconds for acceleration (0 disables acceleration).
+     * @param slowdownStartFactor The fraction of the total distance where deceleration starts (1.0 disables deceleration).
+     * @param kP                  The proportional correction factor for IMU drift.
+     */
+    public void driveStraight(double driveSpeed, double distance, double startAngle, double rampUpTime, double slowdownStartFactor, double kP) {
+        encoders();
 
         int targetTicks = (int) (PULSES_PER_CM * distance);
         double slowdownStart = targetTicks * slowdownStartFactor; // Point where deceleration begins
@@ -317,37 +297,15 @@ public class Specimen3All extends LinearOpMode {
             RightFront.setPower(adjustedSpeed - correction);
             RightBack.setPower(adjustedSpeed - correction);
         }
-
-        // Allow "coasting" before full stop
-        LeftFront.setPower(0.05);
-        LeftBack.setPower(0.05);
-        RightFront.setPower(0.05);
-        RightBack.setPower(0.05);
-        sleep(200);
-
-        // Full stop
-        LeftFront.setPower(0);
-        LeftBack.setPower(0);
-        RightFront.setPower(0);
-        RightBack.setPower(0);
+        movestop();
     }
-
-
     //______________________________Straight*_________________________________//
 
 
     //______________________________*Side_____________________________________//
 
     public void driveSide(double driveSpeed, double distance, double startAngle, double rampUpTime, double slowdownStartFactor, double kP) {
-        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        encoders();
 
         int targetTicks = (int) (PULSES_PER_CM * distance);
         double slowdownStart = targetTicks * slowdownStartFactor; // Point where deceleration begins
@@ -395,13 +353,17 @@ public class Specimen3All extends LinearOpMode {
             RightFront.setPower(-adjustedSpeed - angleError * 0.05);
             RightBack.setPower(adjustedSpeed - angleError * 0.05);*/
         }
+        movestop();
 
+
+    }
+
+    private void movestop() {
         LeftFront.setPower(0.05);
         LeftBack.setPower(0.05);
         RightFront.setPower(0.05);
         RightBack.setPower(0.05);
         sleep(200);
-
         LeftFront.setPower(0);
         LeftBack.setPower(0);
         RightFront.setPower(0);
@@ -413,15 +375,7 @@ public class Specimen3All extends LinearOpMode {
     //___________________________*Diagonal____________________________________//
 
     public void driveDiagonal(double driveSpeed, double distance) {
-        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        encoders();
 
         int targetTicks = (int) (PULSES_PER_CM * distance);
 
@@ -460,7 +414,7 @@ public class Specimen3All extends LinearOpMode {
     //___________________________Diagonal*____________________________________//
 
     //___________________________VerticalPosition*____________________________//
-    public void verticalUp(double position, double power){
+    public void verticalUp(double position, double power) {
         Vertical.setTargetPosition((int) position);
         Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Vertical.setPower(power);
@@ -473,7 +427,7 @@ public class Specimen3All extends LinearOpMode {
     //___________________________VerticalPosition*____________________________//
 
     //___________________________VerticalZero*________________________________//
-    public void verticalZero(double power){
+    public void verticalZero(double power) {
 
         while (opModeIsActive() && !touchVertical.isPressed()) {
             Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -489,7 +443,7 @@ public class Specimen3All extends LinearOpMode {
     //___________________________VerticalZero*_______________________________//
 
     //___________________________HorizontalPosition*____________________________//
-    public void horizontalForward(double position, double power){
+    public void horizontalForward(double position, double power) {
         Horizontal.setTargetPosition((int) position);
         Horizontal.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Horizontal.setPower(power);
@@ -503,7 +457,7 @@ public class Specimen3All extends LinearOpMode {
     //___________________________HorizontalPosition*____________________________//
 
     //___________________________HorizontalZero*____________________________//
-    public void horizontalZero(double power){
+    public void horizontalZero(double power) {
 
         while (opModeIsActive() && !touchHorizontal.isPressed()) {
             Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -515,8 +469,7 @@ public class Specimen3All extends LinearOpMode {
     }
     //___________________________HorizontalalZero*____________________________//
 
-    public double getHeading()
-    {
+    public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
