@@ -128,7 +128,7 @@ public class Auto2Specimen extends LinearOpMode {
 
         driveStraight(-0.6, 30);//go to the wall
         driveSide(0.6, 75);//go to observation
-        driveStraight(-0.3, 7);
+        driveStraight(0.3, 7);
 
         VerClaw.setPosition(0.5);//to close
 
