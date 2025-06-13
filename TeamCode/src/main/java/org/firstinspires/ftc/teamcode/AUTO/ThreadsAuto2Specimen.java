@@ -12,33 +12,13 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
 @Autonomous(name = "Threads Auto 2 Specimen", group = "Robot")
 public class ThreadsAuto2Specimen extends LinearOpMode {
-    private DcMotor LeftFront = null;
-    private DcMotor LeftBack = null;
-    private DcMotor RightFront = null;
-    private DcMotor RightBack = null;
-    private DcMotor Vertical = null;
-    private IMU imu = null;
-
-
-    private Servo VerRotate;
-    private Servo VerClaw;
-    private Servo HorRotate;
-    private Servo HorClaw;
-    static final double FORWARD = 0.6;
-    static final double ROTATE = 0.2;
-    static final double WHEEL_DIAMETER = 10.4;
-    static final double PULSES = 537.7;
-    static final double PI = 3.1415;
-    static final double PULSES_PER_CM = PULSES / (WHEEL_DIAMETER * PI);
-    TouchSensor touchSensor;
-
-
     @Override
     public void runOpMode() {
-        touchSensor = hardwareMap.get(TouchSensor.class, "sensor_touch");
+        touchVertical = hardwareMap.get(TouchSensor.class, "sensor_touch");
 
         LeftFront = hardwareMap.get(DcMotor.class, "left_front");
         LeftBack = hardwareMap.get(DcMotor.class, "left_back");
@@ -278,7 +258,7 @@ public class ThreadsAuto2Specimen extends LinearOpMode {
 
     public void VerSliderZero(double power) {
 
-        while (opModeIsActive() && !touchSensor.isPressed()) {
+        while (opModeIsActive() && !touchVertical.isPressed()) {
             Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Vertical.setPower(power);  // Keep moving down
             telemetry.addData("Vertical Motor", "Moving Down");

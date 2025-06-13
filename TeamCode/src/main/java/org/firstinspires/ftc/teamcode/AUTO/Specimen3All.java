@@ -86,7 +86,6 @@ public class Specimen3All extends LinearOpMode {
         Thread sliderMiddle1 = new Thread(() -> verticalUp(-1500, -0.9));
         Thread driveFirst = new Thread(() -> {
             driveStraight(1, 62, contstant_angle, 500, 0.45, 0.05);
-            //driveStraight(-0.2, 5, contstant_angle, 0, 1, 0.05);//Drive to the chamber
         });
 
         sliderMiddle1.start();
@@ -342,20 +341,8 @@ public class Specimen3All extends LinearOpMode {
             LeftBack.setPower(-adjustedSpeed + correction);
             RightFront.setPower(-adjustedSpeed - correction);
             RightBack.setPower(adjustedSpeed - correction);
-
-            /*telemetry.addData("Angle", "%.2f", currentAngle);
-            telemetry.addData("Correction", "%.2f", angleError);
-            telemetry.update();
-
-            // Коррекция направления на основе угла
-            LeftFront.setPower(adjustedSpeed + angleError * 0.05);
-            LeftBack.setPower(-adjustedSpeed + angleError * 0.05);
-            RightFront.setPower(-adjustedSpeed - angleError * 0.05);
-            RightBack.setPower(adjustedSpeed - angleError * 0.05);*/
         }
         movestop();
-
-
     }
 
     private void movestop() {
