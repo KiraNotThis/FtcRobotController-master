@@ -48,13 +48,13 @@ public class TeleOpAuto extends LinearOpMode {
         VerClaw.setPosition(0.6);
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.88);
+        VerRotate.setPosition(0.7);
 
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
-        HorClaw.setPosition(0.52);
+        HorClaw.setPosition(0.5);
 
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.35);
+        HorRotate.setPosition(0.37);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -152,13 +152,13 @@ public class TeleOpAuto extends LinearOpMode {
             telemetry.update();
 
             if(gamepad2.right_bumper) {//Preparing for taking specimen from observation zone
-                VerClaw.setPosition(0.3);//open
+                VerClaw.setPosition(0.4);//open
                 sleep(500);
                 VerClaw.setPosition(0.6);//close
                 sleep(500);
-                VerRotate.setPosition(0.88);//rotate
+                VerRotate.setPosition(0.7);//rotate
                 sleep(600);
-                VerClaw.setPosition(0.3);
+                VerClaw.setPosition(0.4);
 
                 while (opModeIsActive() && !touchSensor.isPressed()) {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -194,7 +194,7 @@ public class TeleOpAuto extends LinearOpMode {
             if(gamepad2.y && !yBefore){//Control Vertical Claw
                 yBefore = true;
                 if(VerClaw.getPosition() == 0.6) {
-                    VerClaw.setPosition(0.3);
+                    VerClaw.setPosition(0.4);
                 }
                 else{
                     VerClaw.setPosition(0.6);
@@ -204,33 +204,33 @@ public class TeleOpAuto extends LinearOpMode {
 
             if(gamepad2.a && !aBefore){//Control Vertical Rotate
                 aBefore = true;
-                if(VerRotate.getPosition() == 0.88) {
-                    VerRotate.setPosition(0.11);
+                if(VerRotate.getPosition() == 0.7) {
+                    VerRotate.setPosition(0.15);
                 }
                 else{
-                    VerRotate.setPosition(0.88);
+                    VerRotate.setPosition(0.7);
                 }
             }
             aBefore = gamepad2.a;
 
             if(gamepad2.x && !xBefore){//Control Horizontal Claw
                 xBefore = true;
-                if(HorClaw.getPosition() == 0.27) {
-                    HorClaw.setPosition(0.52);
+                if(HorClaw.getPosition() == 0.3) {
+                    HorClaw.setPosition(0.5);
                 }
                 else{
-                    HorClaw.setPosition(0.27);
+                    HorClaw.setPosition(0.3);
                 }
             }
             xBefore = gamepad2.x;
 
             if(gamepad2.b && !bBefore){//Control Horizontal Rotate
                 bBefore = true;
-                if(HorRotate.getPosition() == 0.5) {
-                    HorRotate.setPosition(0.94);
+                if(HorRotate.getPosition() == 0.37) {
+                    HorRotate.setPosition(1);
                 }
                 else{
-                    HorRotate.setPosition(0.5);
+                    HorRotate.setPosition(0.37);
                 }
             }
             bBefore = gamepad2.b;
