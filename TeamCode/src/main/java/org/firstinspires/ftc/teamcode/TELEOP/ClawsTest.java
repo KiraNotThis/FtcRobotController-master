@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-//@Disabled
+@Disabled
 @TeleOp(name="Claws Test", group="Robot")
 public class ClawsTest extends LinearOpMode {
     private DcMotor LeftFront = null;
