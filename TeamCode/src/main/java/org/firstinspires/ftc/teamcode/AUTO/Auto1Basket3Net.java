@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.AUTO;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -11,7 +12,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-
+@Disabled
 @Autonomous(name = "Auto 1 basket 3 Net ", group = "Robot")
 public class Auto1Basket3Net extends LinearOpMode {
     @Override
