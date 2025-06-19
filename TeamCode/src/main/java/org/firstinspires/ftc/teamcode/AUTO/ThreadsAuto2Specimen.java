@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
+@Disabled
 @Autonomous(name = "Threads Auto 2 Specimen", group = "Robot")
 public class ThreadsAuto2Specimen extends LinearOpMode {
     private DcMotor LeftFront = null;
