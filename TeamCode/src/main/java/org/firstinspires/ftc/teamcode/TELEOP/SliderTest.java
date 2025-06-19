@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-@Disabled
 @TeleOp(name="SliderTest", group="Robot")
 public class SliderTest extends LinearOpMode {
     private DcMotor LeftFront = null;
@@ -142,7 +141,7 @@ public class SliderTest extends LinearOpMode {
 
 
             // Telemetry for Vertical motor position
-            telemetry.addData("Vertical Motor Position", Vertical.getCurrentPosition());
+            telemetry.addData("Horizontal Motor Position", Horizontal.getCurrentPosition());
             telemetry.update();
         }
     }

@@ -28,7 +28,7 @@ public class Globals {
     public static TouchSensor touchHorizontal;
 
     // Constant
-    public static final double WHEEL_DIAMETER = 10.4;
+    public static final double WHEEL_DIAMETER = 9.6;
     public static final double PULSES = 537.7;
     public static final double PI = 3.1415;
     public static final double PULSES_PER_CM = PULSES / (WHEEL_DIAMETER * PI);

@@ -105,10 +105,10 @@ public class AutoPIDCalibration extends LinearOpMode {
 
     private void adjustPIDWithGamepad() {
         if (gamepad1.dpad_up) {
-            kP += 0.01;
+            kP += 0.001;
             sleep(150);
         } else if (gamepad1.dpad_down) {
-            kP = Math.max(0, kP - 0.01);
+            kP = Math.max(0, kP - 0.001);
             sleep(150);
         }
 
@@ -150,9 +150,8 @@ public class AutoPIDCalibration extends LinearOpMode {
         double integral = 0;
         double lastError = 0;
         long lastTime = System.currentTimeMillis();
-        float currentTicks = (float) (LeftFront.getCurrentPosition() + LeftBack.getCurrentPosition() + RightFront.getCurrentPosition() + RightBack.getCurrentPosition())/4;
 
-        while (opModeIsActive() && Math.abs(currentTicks) < targetTicks) {
+        while (opModeIsActive() && Math.abs(LeftBack.getCurrentPosition()) < targetTicks) {
 
             double currentAngle = getHeading();
             double error = AngleUnit.normalizeDegrees(currentAngle - targetAngle);

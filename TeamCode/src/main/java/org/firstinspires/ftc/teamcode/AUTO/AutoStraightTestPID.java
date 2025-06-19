@@ -1,69 +1,76 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
-
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.PULSES_PER_CM;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.imu;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name = "Straight Test PID", group = "Robot")
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
+@Autonomous(name = "Specimen", group = "Robot")
 public class AutoStraightTestPID extends LinearOpMode {
 
     @Override
     public void runOpMode() {
         imu = hardwareMap.get(IMU.class, "imu");
 
-        //Define orientation of a robot
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+        );
 
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-        // IMU settings
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
         imu.initialize(parameters);
-
-        // Reset angle before starting
         imu.resetYaw();
+        sleep(300);
+        //Define orientation of a robot
+
+        // IMU settings
 
         LeftFront = hardwareMap.get(DcMotor.class, "left_front");
         LeftBack = hardwareMap.get(DcMotor.class, "left_back");
         RightFront = hardwareMap.get(DcMotor.class, "right_front");
         RightBack = hardwareMap.get(DcMotor.class, "right_back");
+        Vertical = hardwareMap.get(DcMotor.class, "Vertical");
+        Horizontal = hardwareMap.get(DcMotor.class, "Horizontal");
 
+        touchHorizontal = hardwareMap.get(TouchSensor.class, "sensor_touch_hor");
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.12);
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
-        VerClaw.setPosition(0.51);
-
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.08);
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
-        HorClaw.setPosition(0.5);
 
+        VerRotate.setPosition(0.12);
+        VerClaw.setPosition(0.25);
+        HorRotate.setPosition(0.08);
+        HorClaw.setPosition(0.3);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
         RightFront.setDirection(DcMotor.Direction.FORWARD);
         RightBack.setDirection(DcMotor.Direction.FORWARD);
+        Vertical.setDirection(DcMotor.Direction.FORWARD);
+        Horizontal.setDirection(DcMotor.Direction.FORWARD);
+
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         encoders();
+        while (!isStarted()) {
+            telemetry.addData("IMU Heading", "%.2f", getHeading());
+            telemetry.update();
+        }
 
         while (opModeInInit()) {
             telemetry.addData("Currently at:", "%4.0f", getHeading());
@@ -71,10 +78,25 @@ public class AutoStraightTestPID extends LinearOpMode {
         }
 
         waitForStart();
-
         double contstant_angle = getHeading();//the first ideal zero of robot
-        driveStraight(0.7, 100, contstant_angle, 0, 1, 0.05);
+        horizontalForward(-470, 0.2);
+        HorRotate.setPosition(1);//rotate to the sample
+        sleep(500);
+        HorClaw.setPosition(0.5);//close claw
+        sleep(500);
+        HorRotate.setPosition(0.55);//rotate to the sample
+        sleep(500);
+        horizontalZero(-0.2);
 
+        driveStraight(0.5, 110, contstant_angle - 135, 0, 0.9, 0.05);
+        HorClaw.setPosition(0.3);//close claw
+        sleep(500);
+        driveStraight(-0.5, 30, contstant_angle - 135, 0, 1, 0.05);
+
+        driveStraight(-0.5, 105, contstant_angle, 0, 1, 0.05);
+        driveStraight(-0.2, 10, contstant_angle, 0, 1, 0.05);
+        VerClaw.setPosition(0.52);
+        sleep(500);
 
     }
 
@@ -93,73 +115,98 @@ public class AutoStraightTestPID extends LinearOpMode {
     //______________________________*Straight_________________________________//
 
     /**
-     * Movement with PID and angle
+     * Moves the robot forward while maintaining direction using IMU.
+     * Supports acceleration, deceleration, and configurable IMU correction.
      *
-     * @param driveSpeed  speed (0.0 - 1.0)
-     * @param distanceCM  distance in cm
-     * @param targetAngle starting angle
-     * @param kP          proportional coefficient
-     * @param kI          integral coefficient
-     * @param kD          differential coefficient
+     * @param driveSpeed          The maximum driving speed (0.0 - 1.0).
+     * @param distance            The target distance to travel in centimeters.
+     * @param startAngle          The initial IMU heading to maintain.
+     * @param rampUpTime          Time in milliseconds for acceleration (0 disables acceleration).
+     * @param slowdownStartFactor The fraction of the total distance where deceleration starts (1.0 disables deceleration).
+     * @param kP                  The proportional correction factor for IMU drift.
      */
-    public void driveStraight(double driveSpeed, double distanceCM, double targetAngle,
-                              double kP, double kI, double kD) {
+    public void driveStraight(double driveSpeed, double distance, double startAngle, double rampUpTime, double slowdownStartFactor, double kP) {
+        encoders();
 
-        encoders(); // stop and reset encoders
-        int targetTicks = (int) (PULSES_PER_CM * distanceCM); // getting target ticks
+        int targetTicks = (int) (PULSES_PER_CM * distance);
+        double slowdownStart = targetTicks * slowdownStartFactor; // Point where deceleration begins
+        long startTime = System.currentTimeMillis();
 
-        double integral = 0;// we don't have a mistake in the start
-        double lastError = 0;// we don't have last error -- that's why it is 0
-        long lastTime = System.currentTimeMillis(); // to get current time in ms
+        while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < targetTicks) {
+            int currentTicks = Math.abs(LeftFront.getCurrentPosition());
+            double currentAngle = getHeading();
+            double angleError = currentAngle - startAngle;
 
-        while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < targetTicks) {//if we still need to move
-            double currentAngle = getHeading();//taking a current angle of the robot
-            double error = targetAngle - currentAngle; //error's calculating the between "ideal" angle and the current
+            // Acceleration logic
+            double speedFactor = 1.0;
+            if (rampUpTime > 0) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                speedFactor = Math.min(1.0, elapsedTime / rampUpTime);
+            }
 
-            //doing error from [-180; 180]
-            error = (error + 180) % 360 - 180;
+            // Deceleration logic
+            double slowdownFactor = 1.0;
+            if (slowdownStartFactor < 1.0 && currentTicks > slowdownStart) {
+                slowdownFactor = Math.max(0.2, 1.0 - ((currentTicks - slowdownStart) / (targetTicks - slowdownStart)));
+            }
 
-            long now = System.currentTimeMillis(); // getting current time
-            double deltaTime = (now - lastTime) / 1000.0; // doing the time in seconds not in ms
+            double adjustedSpeed = driveSpeed * slowdownFactor * speedFactor;
+            double correction = angleError * kP;  // Use kP for IMU correction
 
-            integral += error * deltaTime; //adding our error on time for integral
-            double derivative = (error - lastError) / deltaTime; // calculating how fast the error is changing
-
-            double correction = kP * error + kI * integral + kD * derivative; //calculating a correction based on coefficients
-
-            double leftPower = driveSpeed + correction;//making leftpower for left motors
-            double rightPower = driveSpeed - correction; //rightpower for rights
-
-            //checking and ixing if power is out of range(<-1 or >1)
-            leftPower = Math.max(-1.0, Math.min(1.0, leftPower));
-            rightPower = Math.max(-1.0, Math.min(1.0, rightPower));
-
-            LeftFront.setPower(leftPower);
-            LeftBack.setPower(leftPower);
-            RightFront.setPower(rightPower);
-            RightBack.setPower(rightPower);
-
-            telemetry.addData("Angle", "%.2f", currentAngle);
-            telemetry.addData("Error", "%.2f", error);
+            telemetry.addData("Straight Movement", "Target: %5d, Current: %5d", targetTicks, currentTicks);
+            telemetry.addData("IMU Angle", "%.2f", currentAngle);
             telemetry.addData("Correction", "%.2f", correction);
             telemetry.update();
 
-            lastError = error;//remaking lasterror for our current error
-            lastTime = now;// remaking lasttime for our current time
+            // Apply correction for maintaining a straight path
+            LeftFront.setPower(adjustedSpeed + correction);
+            LeftBack.setPower(adjustedSpeed + correction);
+            RightFront.setPower(adjustedSpeed - correction);
+            RightBack.setPower(adjustedSpeed - correction);
         }
-
         movestop();
     }
     //______________________________Straight*_________________________________//
 
 
+    //___________________________HorizontalPosition*____________________________//
+    public void horizontalForward(double position, double power) {
+        Horizontal.setTargetPosition((int) position);
+        Horizontal.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Horizontal.setPower(power);
+
+        while (opModeIsActive() && Horizontal.isBusy()) {
+            telemetry.addData("Current Position", Horizontal.getCurrentPosition());
+            telemetry.update();
+        }
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    //___________________________HorizontalPosition*____________________________//
+
+    //___________________________HorizontalZero*____________________________//
+    public void horizontalZero(double power) {
+
+        while (opModeIsActive() && !touchHorizontal.isPressed()) {
+            Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Horizontal.setPower(power);  // Keep moving down
+        }
+
+        // Stop the vertical motor once the sensor is pressed
+        Horizontal.setPower(0);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    //___________________________HorizontalalZero*____________________________//
     private void movestop() {
+        LeftFront.setPower(0.05);
+        LeftBack.setPower(0.05);
+        RightFront.setPower(0.05);
+        RightBack.setPower(0.05);
+        sleep(200);
         LeftFront.setPower(0);
         LeftBack.setPower(0);
         RightFront.setPower(0);
         RightBack.setPower(0);
     }
-
 
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();

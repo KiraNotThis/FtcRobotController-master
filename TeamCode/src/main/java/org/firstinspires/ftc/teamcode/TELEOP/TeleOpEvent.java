@@ -204,11 +204,11 @@ public class TeleOpEvent extends LinearOpMode {
 
             if(gamepad2.y && !yBefore){//Control Vertical Claw
                 yBefore = true;
-                if(VerClaw.getPosition() == 0.51) {
-                    VerClaw.setPosition(0.4);
+                if(VerClaw.getPosition() == 0.52) {
+                    VerClaw.setPosition(0.25);
                 }
                 else{
-                    VerClaw.setPosition(0.51);
+                    VerClaw.setPosition(0.52);
                 }
             }
             yBefore = gamepad2.y;
