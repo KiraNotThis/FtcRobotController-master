@@ -1,15 +1,6 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.PULSES_PER_CM;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.imu;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,57 +8,55 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous(name = "PID Calibration", group = "Calibration")
 public class AutoPIDCalibration extends LinearOpMode {
 
-    // PID коэффициенты для калибровки
     double kP = 0.05;
     double kI = 0.0;
     double kD = 0.0;
 
-    double distanceCM = 50;  // расстояние для теста
-    double speed = 0.5;      // скорость движения
+    double distanceCM = 100;
+    double speed = 0.5;
 
-    boolean isMoving = false; // флаг, чтобы не менять коэффициенты во время движения
+    boolean isMoving = false;
 
     @Override
     public void runOpMode() {
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        // Настройка ориентации робота
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+        );
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
         imu.initialize(parameters);
         imu.resetYaw();
+        sleep(300); // Дать IMU время сброситься
 
-        // Инициализация моторов и серв
         LeftFront = hardwareMap.get(DcMotor.class, "left_front");
         LeftBack = hardwareMap.get(DcMotor.class, "left_back");
         RightFront = hardwareMap.get(DcMotor.class, "right_front");
         RightBack = hardwareMap.get(DcMotor.class, "right_back");
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.12);
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
-        VerClaw.setPosition(0.51);
-
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.08);
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
+
+        VerRotate.setPosition(0.12);
+        VerClaw.setPosition(0.51);
+        HorRotate.setPosition(0.08);
         HorClaw.setPosition(0.5);
 
-        LeftFront.setDirection(DcMotor.Direction.FORWARD);
-        LeftBack.setDirection(DcMotor.Direction.FORWARD);
-        RightFront.setDirection(DcMotor.Direction.REVERSE);
-        RightBack.setDirection(DcMotor.Direction.REVERSE);
+        LeftFront.setDirection(DcMotor.Direction.REVERSE);
+        LeftBack.setDirection(DcMotor.Direction.REVERSE);
+        RightFront.setDirection(DcMotor.Direction.FORWARD);
+        RightBack.setDirection(DcMotor.Direction.FORWARD);
 
         encoders();
 
@@ -76,10 +65,10 @@ public class AutoPIDCalibration extends LinearOpMode {
             telemetry.addData("kP", "%.4f", kP);
             telemetry.addData("kI", "%.4f", kI);
             telemetry.addData("kD", "%.4f", kD);
+            telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.addData("Press A to run test", "");
             telemetry.update();
 
-            // Обновление коэффициентов до старта
             adjustPIDWithGamepad();
         }
 
@@ -91,8 +80,17 @@ public class AutoPIDCalibration extends LinearOpMode {
 
                 if (gamepad1.a) {
                     isMoving = true;
-                    double startAngle = getHeading();
-                    driveStraightPID(speed, distanceCM, startAngle, kP, kI, kD);
+
+                    double initialHeading = getHeading();
+                    telemetry.addData("Start Heading", "%.2f", initialHeading);
+                    telemetry.update();
+
+                    driveStraightPID(speed, distanceCM, 0, kP, kI, kD);  // целевой угол = 0
+
+                    double finalHeading = getHeading();
+                    telemetry.addData("Final Heading", "%.2f", finalHeading);
+                    telemetry.update();
+
                     isMoving = false;
                 }
             }
@@ -100,19 +98,17 @@ public class AutoPIDCalibration extends LinearOpMode {
             telemetry.addData("kP", "%.4f", kP);
             telemetry.addData("kI", "%.4f", kI);
             telemetry.addData("kD", "%.4f", kD);
-            telemetry.addData("Press A to start move", "");
+            telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
         }
     }
 
     private void adjustPIDWithGamepad() {
-        // Плавное изменение коэффициентов с задержкой для удобства
         if (gamepad1.dpad_up) {
-            kP += 0.001;
+            kP += 0.01;
             sleep(150);
         } else if (gamepad1.dpad_down) {
-            kP -= 0.001;
-            if (kP < 0) kP = 0;
+            kP = Math.max(0, kP - 0.001);
             sleep(150);
         }
 
@@ -120,8 +116,7 @@ public class AutoPIDCalibration extends LinearOpMode {
             kI += 0.0005;
             sleep(150);
         } else if (gamepad1.dpad_left) {
-            kI -= 0.0005;
-            if (kI < 0) kI = 0;
+            kI = Math.max(0, kI - 0.0005);
             sleep(150);
         }
 
@@ -129,8 +124,7 @@ public class AutoPIDCalibration extends LinearOpMode {
             kD += 0.001;
             sleep(150);
         } else if (gamepad1.left_bumper) {
-            kD -= 0.001;
-            if (kD < 0) kD = 0;
+            kD = Math.max(0, kD - 0.001);
             sleep(150);
         }
     }
@@ -147,21 +141,10 @@ public class AutoPIDCalibration extends LinearOpMode {
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /**
-     * Движение вперед с PID контролем угла
-     *
-     * @param driveSpeed  скорость (0.0 - 1.0)
-     * @param distanceCM  расстояние в сантиметрах
-     * @param targetAngle целевой угол
-     * @param kP          коэффициент пропорциональности
-     * @param kI          коэффициент интеграла
-     * @param kD          коэффициент дифференциала
-     */
     public void driveStraightPID(double driveSpeed, double distanceCM, double targetAngle,
                                  double kP, double kI, double kD) {
 
         encoders();
-
         int targetTicks = (int) (PULSES_PER_CM * distanceCM);
 
         double integral = 0;
@@ -171,35 +154,30 @@ public class AutoPIDCalibration extends LinearOpMode {
         while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < targetTicks) {
 
             double currentAngle = getHeading();
-            double error = targetAngle - currentAngle;
-            error = (error + 180) % 360 - 180;
+            double error = AngleUnit.normalizeDegrees(currentAngle - targetAngle);
 
             long now = System.currentTimeMillis();
-            double deltaTime = (now - lastTime) / 1000.0;
-            if (deltaTime < 1e-6) deltaTime = 1e-6;
+            double deltaTime = Math.max(1e-6, (now - lastTime) / 1000.0);
 
             integral += error * deltaTime;
             double derivative = (error - lastError) / deltaTime;
 
             double correction = kP * error + kI * integral + kD * derivative;
+            correction = Math.max(-0.1, Math.min(0.1, correction));
 
-            double leftPower = driveSpeed + correction;
-            double rightPower = driveSpeed - correction;
-
-            leftPower = Math.max(-1, Math.min(1, leftPower));
-            rightPower = Math.max(-1, Math.min(1, rightPower));
+            double leftPower = Math.max(-1, Math.min(1, driveSpeed + correction));
+            double rightPower = Math.max(-1, Math.min(1, driveSpeed - correction));
 
             LeftFront.setPower(leftPower);
             LeftBack.setPower(leftPower);
             RightFront.setPower(rightPower);
             RightBack.setPower(rightPower);
 
-            telemetry.addData("Angle", "%.2f", currentAngle);
+            telemetry.addData("Target Angle", "%.2f", targetAngle);
+            telemetry.addData("Current Angle", "%.2f", currentAngle);
             telemetry.addData("Error", "%.2f", error);
             telemetry.addData("Correction", "%.2f", correction);
-            telemetry.addData("Left Power", "%.2f", leftPower);
-            telemetry.addData("Right Power", "%.2f", rightPower);
-            telemetry.addData("Encoder Position", LeftFront.getCurrentPosition());
+            telemetry.addData("Encoder Ticks", LeftFront.getCurrentPosition());
             telemetry.update();
 
             lastError = error;

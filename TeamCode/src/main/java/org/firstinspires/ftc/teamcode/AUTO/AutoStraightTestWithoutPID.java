@@ -52,10 +52,10 @@ public class AutoStraightTestWithoutPID extends LinearOpMode {
         HorClaw.setPosition(0.5);
 
 
-        LeftFront.setDirection(DcMotor.Direction.FORWARD);
-        LeftBack.setDirection(DcMotor.Direction.FORWARD);
-        RightFront.setDirection(DcMotor.Direction.REVERSE);
-        RightBack.setDirection(DcMotor.Direction.REVERSE);
+        LeftFront.setDirection(DcMotor.Direction.REVERSE);
+        LeftBack.setDirection(DcMotor.Direction.REVERSE);
+        RightFront.setDirection(DcMotor.Direction.FORWARD);
+        RightBack.setDirection(DcMotor.Direction.FORWARD);
 
         encoders();
 
@@ -67,7 +67,8 @@ public class AutoStraightTestWithoutPID extends LinearOpMode {
         waitForStart();
 
         double contstant_angle = getHeading();//the first ideal zero of robot
-        driveStraight(0.7, 100, contstant_angle, 0, 1, 0.05);
+        driveStraight(0.7, 100);
+        driveStraight(-0.7, 100);
 
 
     }
@@ -92,49 +93,20 @@ public class AutoStraightTestWithoutPID extends LinearOpMode {
      *
      * @param driveSpeed          The maximum driving speed (0.0 - 1.0).
      * @param distance            The target distance to travel in centimeters.
-     * @param startAngle          The initial IMU heading to maintain.
-     * @param rampUpTime          Time in milliseconds for acceleration (0 disables acceleration).
-     * @param slowdownStartFactor The fraction of the total distance where deceleration starts (1.0 disables deceleration).
-     * @param kP                  The proportional correction factor for IMU drift.
+                 The proportional correction factor for IMU drift.
      */
-    public void driveStraight(double driveSpeed, double distance, double startAngle, double rampUpTime, double slowdownStartFactor, double kP) {
+    public void driveStraight(double driveSpeed, double distance) {
         encoders();
 
         int targetTicks = (int) (PULSES_PER_CM * distance);
-        double slowdownStart = targetTicks * slowdownStartFactor; // Point where deceleration begins
-        long startTime = System.currentTimeMillis();
-
         while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < targetTicks) {
-            int currentTicks = Math.abs(LeftFront.getCurrentPosition());
-            double currentAngle = getHeading();
-            double angleError = startAngle - currentAngle;
 
-            // Acceleration logic
-            double speedFactor = 1.0;
-            if (rampUpTime > 0) {
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                speedFactor = Math.min(1.0, elapsedTime / rampUpTime);
-            }
-
-            // Deceleration logic
-            double slowdownFactor = 1.0;
-            if (slowdownStartFactor < 1.0 && currentTicks > slowdownStart) {
-                slowdownFactor = Math.max(0.2, 1.0 - ((currentTicks - slowdownStart) / (targetTicks - slowdownStart)));
-            }
-
-            double adjustedSpeed = driveSpeed * slowdownFactor * speedFactor;
-            double correction = angleError * kP;  // Use kP for IMU correction
-
-            telemetry.addData("Straight Movement", "Target: %5d, Current: %5d", targetTicks, currentTicks);
-            telemetry.addData("IMU Angle", "%.2f", currentAngle);
-            telemetry.addData("Correction", "%.2f", correction);
-            telemetry.update();
 
             // Apply correction for maintaining a straight path
-            LeftFront.setPower(adjustedSpeed + correction);
-            LeftBack.setPower(adjustedSpeed + correction);
-            RightFront.setPower(adjustedSpeed - correction);
-            RightBack.setPower(adjustedSpeed - correction);
+            LeftFront.setPower(driveSpeed);
+            LeftBack.setPower(driveSpeed);
+            RightFront.setPower(driveSpeed);
+            RightBack.setPower(driveSpeed);
         }
         movestop();
     }
@@ -142,11 +114,6 @@ public class AutoStraightTestWithoutPID extends LinearOpMode {
 
 
     private void movestop() {
-        LeftFront.setPower(0.05);
-        LeftBack.setPower(0.05);
-        RightFront.setPower(0.05);
-        RightBack.setPower(0.05);
-        sleep(200);
         LeftFront.setPower(0);
         LeftBack.setPower(0);
         RightFront.setPower(0);

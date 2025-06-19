@@ -31,7 +31,7 @@ public class AutoSideTestWithoutPID extends LinearOpMode {
 
         //Define orientation of a robot
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
@@ -58,10 +58,10 @@ public class AutoSideTestWithoutPID extends LinearOpMode {
         HorClaw.setPosition(0.5);
 
 
-        LeftFront.setDirection(DcMotor.Direction.FORWARD);
-        LeftBack.setDirection(DcMotor.Direction.FORWARD);
-        RightFront.setDirection(DcMotor.Direction.REVERSE);
-        RightBack.setDirection(DcMotor.Direction.REVERSE);
+        LeftFront.setDirection(DcMotor.Direction.REVERSE);
+        LeftBack.setDirection(DcMotor.Direction.REVERSE);
+        RightFront.setDirection(DcMotor.Direction.FORWARD);
+        RightBack.setDirection(DcMotor.Direction.FORWARD);
 
         encoders();
 
@@ -69,11 +69,13 @@ public class AutoSideTestWithoutPID extends LinearOpMode {
             telemetry.addData("Currently at:", "%4.0f", getHeading());
             telemetry.update();
         }
-
+        telemetry.addData("Initial Heading", getHeading());
+        telemetry.update();
+        sleep(2000);
         waitForStart();
 
         double contstant_angle = getHeading();//the first ideal zero of robot
-        driveSide(0.7, 100, contstant_angle, 0, 1, 0.05);
+        driveSide(0.7, 100, contstant_angle, 0, 1, 0.01);
 
 
     }
