@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Autonomous(name = "Specimen 333", group = "Robot")
-public class Specimen3 extends LinearOpMode {
+@Autonomous(name = "1 Specimen + taking 1", group = "Robot")
+public class Specimentaking extends LinearOpMode {
 
     @Override
     public void runOpMode() {
