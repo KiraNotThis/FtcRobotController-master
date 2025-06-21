@@ -124,6 +124,7 @@ public class Specimen3Final extends LinearOpMode {
 
 
 
+
         horizontalForward(-600, -0.7);
 
         HorRotate.setPosition(1);//rotate to the sample

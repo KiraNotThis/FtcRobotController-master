@@ -39,6 +39,7 @@ public class Globals {
     public static final double horclaw_open = 0.3;
     public static final double horclaw_close = 0.5;
     public static final double horrotate_ground = 1;
+
     public static final double horrotate_middle = 0.55;
     public static final double horrotate_lying = 0.08;
 }
