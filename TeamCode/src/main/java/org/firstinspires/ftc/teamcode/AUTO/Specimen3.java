@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.AUTO;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -14,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Autonomous(name = "Specimen", group = "Robot")
-public class AutoStraightTestPID extends LinearOpMode {
+@Autonomous(name = "Specimen 333", group = "Robot")
+public class Specimen3 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -42,13 +41,15 @@ public class AutoStraightTestPID extends LinearOpMode {
         Horizontal = hardwareMap.get(DcMotor.class, "Horizontal");
 
         touchHorizontal = hardwareMap.get(TouchSensor.class, "sensor_touch_hor");
+        touchVertical = hardwareMap.get(TouchSensor.class, "sensor_touch");
+
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
 
         VerRotate.setPosition(0.12);
-        VerClaw.setPosition(0.25);
+        VerClaw.setPosition(0.51);
         HorRotate.setPosition(0.08);
         HorClaw.setPosition(0.3);
 
@@ -56,15 +57,15 @@ public class AutoStraightTestPID extends LinearOpMode {
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
         RightFront.setDirection(DcMotor.Direction.FORWARD);
         RightBack.setDirection(DcMotor.Direction.FORWARD);
-        Vertical.setDirection(DcMotor.Direction.FORWARD);
+
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
+        Vertical.setDirection(DcMotor.Direction.FORWARD);
 
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         encoders();
         while (!isStarted()) {
@@ -79,23 +80,103 @@ public class AutoStraightTestPID extends LinearOpMode {
 
         waitForStart();
         double contstant_angle = getHeading();//the first ideal zero of robot
-        horizontalForward(-470, 0.2);
+
+        Thread sliderMiddle1 = new Thread(() -> verticalUp(-1500, -0.9));
+        Thread driveFirst = new Thread(() -> {
+            driveStraight(1, 62, contstant_angle, 500, 0.45, 0.05);
+        });
+
+        sliderMiddle1.start();
+        driveFirst.start();
+
+        try {
+            sliderMiddle1.join();
+            driveFirst.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //PLACE 1st SPECIMEN
+        verticalUp(-2600, -1);//place specimen 1
+        VerClaw.setPosition(0.4);//to open
+
+        //GO FOR THE SAMPLE
+        Thread sliderZero1 = new Thread(() -> verticalZero(1));
+        Thread driveSecond = new Thread(() -> {
+            driveStraight(-0.3, 13, contstant_angle, 0, 1, 0.05);//Drive back
+            sleep(50);
+            driveSide(1, 145, contstant_angle, 500, 0.5, 0.05);
+        });
+
+        sliderZero1.start();
+        driveSecond.start();
+
+        try {
+            sliderZero1.join();
+            driveSecond.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+        horizontalForward(-600, -0.7);
+
         HorRotate.setPosition(1);//rotate to the sample
         sleep(500);
         HorClaw.setPosition(0.5);//close claw
         sleep(500);
-        HorRotate.setPosition(0.55);//rotate to the sample
+        HorRotate.setPosition(0.74);//rotate to the sample
         sleep(500);
-        horizontalZero(-0.2);
 
-        driveStraight(0.5, 110, contstant_angle - 135, 0, 0.9, 0.05);
-        HorClaw.setPosition(0.3);//close claw
+        Thread horizontalForward = new Thread(() -> {
+            horizontalForward(100, 0.7);
+            VerRotate.setPosition(0.78);
+
+        });
+        Thread driveThird = new Thread(() -> {
+            driveStraight(1, 105, contstant_angle - 135, 0, 0.9, 0.05);
+        });
+
+        horizontalForward.start();
+        driveThird.start();
+
+        try {
+            horizontalForward.join();
+            driveThird.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+        HorClaw.setPosition(0.3);//open claw
         sleep(500);
-        driveStraight(-0.5, 30, contstant_angle - 135, 0, 1, 0.05);
 
-        driveStraight(-0.5, 105, contstant_angle, 0, 1, 0.05);
-        driveStraight(-0.2, 10, contstant_angle, 0, 1, 0.05);
-        VerClaw.setPosition(0.52);
+        Thread rotate = new Thread(() -> {
+
+            HorRotate.setPosition(0.55);
+            horizontalForward(450, 0.7);
+
+        });
+
+        Thread drive4 = new Thread(() -> {
+            driveStraight(-1, 10, contstant_angle - 135, 0, 1, 0.05);
+            driveStraight(-1, 87, contstant_angle, 0, 1, 0.05);
+        });
+
+        rotate.start();
+        drive4.start();
+
+        try {
+            rotate.join();
+            drive4.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        driveStraight(-0.3, 9, contstant_angle, 0, 1, 0.05);
+        VerClaw.setPosition(0.52);//close the claw
         sleep(500);
 
     }
@@ -169,6 +250,81 @@ public class AutoStraightTestPID extends LinearOpMode {
     //______________________________Straight*_________________________________//
 
 
+    //______________________________*Side_____________________________________//
+
+    public void driveSide(double driveSpeed, double distance, double startAngle, double rampUpTime, double slowdownStartFactor, double kP) {
+        encoders();
+
+        int targetTicks = (int) (PULSES_PER_CM * distance);
+        double slowdownStart = targetTicks * slowdownStartFactor; // Point where deceleration begins
+        long startTime = System.currentTimeMillis();
+
+        while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < targetTicks) {
+            int currentTicks = Math.abs(LeftFront.getCurrentPosition());
+            double currentAngle = getHeading();
+            double angleError = currentAngle - startAngle;
+
+            // Acceleration logic
+            double speedFactor = 1.0;
+            if (rampUpTime > 0) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                speedFactor = Math.min(1.0, elapsedTime / rampUpTime);
+            }
+
+            // Deceleration logic
+            double slowdownFactor = 1.0;
+            if (slowdownStartFactor < 1.0 && currentTicks > slowdownStart) {
+                slowdownFactor = Math.max(0.2, 1.0 - ((currentTicks - slowdownStart) / (targetTicks - slowdownStart)));
+            }
+
+            double adjustedSpeed = driveSpeed * slowdownFactor * speedFactor;
+            double correction = angleError * kP;  // Use kP for IMU correction
+
+            telemetry.addData("Straight Movement", "Target: %5d, Current: %5d", targetTicks, currentTicks);
+            telemetry.addData("IMU Angle", "%.2f", currentAngle);
+            telemetry.addData("Correction", "%.2f", correction);
+            telemetry.update();
+
+            // Apply correction for maintaining a straight path
+            LeftFront.setPower(adjustedSpeed + correction);
+            LeftBack.setPower(-adjustedSpeed + correction);
+            RightFront.setPower(-adjustedSpeed - correction);
+            RightBack.setPower(adjustedSpeed - correction);
+        }
+        movestop();
+    }
+    //______________________________Side*_____________________________________//
+
+
+    //___________________________VerticalPosition*____________________________//
+    public void verticalUp(double position, double power) {
+        Vertical.setTargetPosition((int) position);
+        Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Vertical.setPower(power);
+
+        while (opModeIsActive() && Vertical.isBusy()) {
+            telemetry.addData("Current Position", Vertical.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+    //___________________________VerticalPosition*____________________________//
+
+    //___________________________VerticalZero*________________________________//
+    public void verticalZero(double power) {
+
+        while (opModeIsActive() && !touchVertical.isPressed()) {
+            Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Vertical.setPower(power);  // Keep moving down
+            telemetry.addData("Vertical Motor", "Moving Down");
+            telemetry.update();
+        }
+
+        // Stop the vertical motor once the sensor is pressed
+        Vertical.setPower(0);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    //___________________________VerticalZero*_______________________________//
+
     //___________________________HorizontalPosition*____________________________//
     public void horizontalForward(double position, double power) {
         Horizontal.setTargetPosition((int) position);
@@ -181,21 +337,6 @@ public class AutoStraightTestPID extends LinearOpMode {
         }
         Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    //___________________________HorizontalPosition*____________________________//
-
-    //___________________________HorizontalZero*____________________________//
-    public void horizontalZero(double power) {
-
-        while (opModeIsActive() && !touchHorizontal.isPressed()) {
-            Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Horizontal.setPower(power);  // Keep moving down
-        }
-
-        // Stop the vertical motor once the sensor is pressed
-        Horizontal.setPower(0);
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-    //___________________________HorizontalalZero*____________________________//
     private void movestop() {
         LeftFront.setPower(0.05);
         LeftBack.setPower(0.05);

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.TELEOP;
 
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.Horizontal;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchHorizontal;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -43,7 +46,7 @@ public class SliderTest extends LinearOpMode {
 
         Horizontal = hardwareMap.get(DcMotor.class, "Horizontal");
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
-
+        touchHorizontal = hardwareMap.get(TouchSensor.class, "sensor_touch_hor");
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
         VerClaw.setPosition(0.4);
 
@@ -141,8 +144,14 @@ public class SliderTest extends LinearOpMode {
 
 
             // Telemetry for Vertical motor position
-            telemetry.addData("Horizontal Motor Position", Horizontal.getCurrentPosition());
-            telemetry.update();
+            if (touchHorizontal.isPressed()) {
+                telemetry.addData("Touch Sensor", "Pressed");
+                telemetry.update();
+            }
+            else {
+                telemetry.addData("Touch Sensor", " NOT Pressed");
+                telemetry.update();
+            }
         }
     }
 }
