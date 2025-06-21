@@ -46,7 +46,7 @@ public class Specimen extends LinearOpMode {
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
 
-        VerRotate.setPosition(0.12);
+        VerRotate.setPosition(0.78);
         VerClaw.setPosition(0.25);
         HorRotate.setPosition(0.08);
         HorClaw.setPosition(0.3);
@@ -75,25 +75,40 @@ public class Specimen extends LinearOpMode {
 
         waitForStart();
         double contstant_angle = getHeading();//the first ideal zero of robot
-        horizontalForward(-500, -0.2);
-        horizontalForward(100, 0.2);
-        //HorRotate.setPosition(1);//rotate to the sample
-        //sleep(500);
-        //HorClaw.setPosition(0.5);//close claw
-        //sleep(500);
-        //HorRotate.setPosition(0.55);//rotate to the sample
-        //sleep(500);
-        //horizontalForward(100, 0.2);
+        horizontalForward(-620, -0.7);
 
-        //driveStraight(0.5, 110, contstant_angle - 135, 0, 0.9, 0.05);
-        //HorClaw.setPosition(0.5);//open claw
-        //sleep(500);
-        //driveStraight(-0.5, 30, contstant_angle - 135, 0, 1, 0.05);
+        HorRotate.setPosition(1);//rotate to the sample
+        sleep(500);
+        HorClaw.setPosition(0.5);//close claw
+        sleep(500);
+        HorRotate.setPosition(0.55);//rotate to the sample
+        sleep(500);
 
-        //driveStraight(-0.5, 105, contstant_angle, 0, 1, 0.05);
-        //driveStraight(-0.2, 10, contstant_angle, 0, 1, 0.05);
-        //VerClaw.setPosition(0.52);
-        //sleep(500);
+        Thread horizontalForward = new Thread(() -> horizontalForward(620, 0.7));
+        Thread driveFirst = new Thread(() -> {
+            driveStraight(1, 105, contstant_angle - 135, 0, 0.9, 0.05);
+        });
+
+        horizontalForward.start();
+        driveFirst.start();
+
+        try {
+            horizontalForward.join();
+            driveFirst.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+        HorClaw.setPosition(0.3);//open claw
+        sleep(500);
+        driveStraight(-1, 10, contstant_angle - 135, 0, 1, 0.05);
+
+        driveStraight(-1, 87, contstant_angle, 0, 1, 0.05);
+        driveStraight(-0.3, 9, contstant_angle, 0, 1, 0.05);
+        VerClaw.setPosition(0.52);//close the claw
+        sleep(500);
 
     }
 

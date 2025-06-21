@@ -443,19 +443,6 @@ public class Specimen3All extends LinearOpMode {
     }
     //___________________________HorizontalPosition*____________________________//
 
-    //___________________________HorizontalZero*____________________________//
-    public void horizontalZero(double power) {
-
-        while (opModeIsActive() && !touchHorizontal.isPressed()) {
-            Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Horizontal.setPower(power);  // Keep moving down
-        }
-
-        // Stop the vertical motor once the sensor is pressed
-        Horizontal.setPower(0);
-    }
-    //___________________________HorizontalalZero*____________________________//
-
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);

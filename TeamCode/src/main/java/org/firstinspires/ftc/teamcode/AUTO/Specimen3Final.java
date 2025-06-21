@@ -1,19 +1,6 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.Horizontal;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.PULSES_PER_CM;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.Vertical;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.imu;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchHorizontal;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchVertical;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -111,7 +98,7 @@ public class Specimen3Final extends LinearOpMode {
 
         //PLACE 1st SPECIMEN
         verticalUp(-2600, -1);//place specimen 1*/
-        VerClaw.setPosition(0.4);//to open
+        VerClaw.setPosition(verclaw_open);//to open
         sleep(500);
         driveStraight(-0.3, 13, contstant_angle, 0, 1, 0.05);//Drive back
         sleep(50);
@@ -139,18 +126,18 @@ public class Specimen3Final extends LinearOpMode {
 
         horizontalForward(-600, -0.7);
 
-        HorRotate.setPosition(1);//rotate to the sample
+        HorRotate.setPosition(horrotate_ground);//rotate to the sample
         sleep(500);
-        HorClaw.setPosition(0.5);//close claw
+        HorClaw.setPosition(horclaw_close);//close claw
         sleep(500);
-        HorRotate.setPosition(0.74);//rotate to the sample
+        HorRotate.setPosition(horrotate_up);//rotate to the sample
         sleep(500);
 
         Thread horizontalForward = new Thread(() -> {
             horizontalForward(100, 0.7);
-            VerRotate.setPosition(0.78);
-
+            VerRotate.setPosition(verrotate_player);
         });
+
         Thread driveThird = new Thread(() -> {
             driveStraight(1, 105, contstant_angle - 135, 0, 0.9, 0.05);
         });
@@ -165,13 +152,11 @@ public class Specimen3Final extends LinearOpMode {
             e.printStackTrace();
         }
 
-
-
-        HorClaw.setPosition(0.3);//open claw
+        HorClaw.setPosition(horclaw_open);//open claw
         sleep(500);
 
         Thread rotate = new Thread(() -> {
-            HorRotate.setPosition(0.55);
+            HorRotate.setPosition(horrrotate_middle);
             horizontalForward(450, 0.7);
         });
 
@@ -191,8 +176,99 @@ public class Specimen3Final extends LinearOpMode {
         }
 
         driveStraight(-0.3, 9, contstant_angle, 0, 1, 0.05);
-        VerClaw.setPosition(0.52);//close the claw
+        VerClaw.setPosition(verclaw_close);//close the claw
         sleep(500);
+
+        VerRotate.setPosition(verrotate_chamber);//rotate to chamber
+        driveStraight(0.8, 7, contstant_angle, 0, 1, 0.05);
+        driveSide(-0.8, 95, contstant_angle, 450, 0.5, 0.05);
+        driveStraight(0.8, 47, contstant_angle, 500, 0.5, 0.05);
+        //GO TO THE CHAMBER 2
+        /*Thread sliderMiddle2 = new Thread(() -> verticalUp(-1500, -1));
+        Thread driveThird = new Thread(() -> {
+            driveStraight(0.8, 7, contstant_angle, 0, 1, 0.05);
+            driveSide(-0.8, 95, contstant_angle, 450, 0.5, 0.05);
+            driveStraight(0.8, 47, contstant_angle, 500, 0.5, 0.05);
+            //driveStraight(-0.2, 5, contstant_angle, 0, 1, 0.05);
+        });
+
+        sliderMiddle2.start();
+        driveThird.start();
+
+        try {
+            sliderMiddle2.join();
+            driveThird.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //PLACE 2nd SPECIMEN
+        verticalUp(-2600, -1);//place specimen 1*/
+        VerClaw.setPosition(verclaw_open);//to open
+        sleep(500);
+        VerClaw.setPosition(verclaw_close);//to close
+        sleep(500);
+        VerRotate.setPosition(verrotate_player);//rotate for observation
+        sleep(500);
+        VerClaw.setPosition(verclaw_open);//to open
+
+        driveStraight(-1, 50, contstant_angle, 500, 0.5, 0.05);
+        driveSide(1, 100, contstant_angle, 500, 0.5, 0.05);
+        driveStraight(-0.3, 17, contstant_angle, 0, 1, 0.05);
+
+        //GO TO OBSERVATION 2nd
+        /*Thread sliderZero2 = new Thread(() -> verticalZero(0.9));
+        Thread driveFourth = new Thread(() -> {
+            driveStraight(-1, 50, contstant_angle, 500, 0.5, 0.05);
+            driveSide(1, 100, contstant_angle, 500, 0.5, 0.05);
+            driveStraight(-0.3, 17, contstant_angle, 0, 1, 0.05);
+        });
+
+        sliderZero2.start();
+        driveFourth.start();
+
+        try {
+            sliderZero2.join();
+            driveFourth.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+
+        //TAKE SPECIMEN FROM OBSERVATION 3rd
+        VerClaw.setPosition(verclaw_close);// close VerClaw
+        sleep(500);
+        VerRotate.setPosition(verrotate_chamber);//rotate to chamber
+
+
+        driveStraight(1, 7, contstant_angle, 0, 0.5, 0.05);
+        driveSide(-1, 97, contstant_angle, 500, 0.5, 0.05);
+        driveStraight(1, 55, contstant_angle, 500, 0.5, 0.05);
+        //GO TO THE CHAMBER 3
+        /*Thread sliderMiddle3 = new Thread(() -> verticalUp(-1500, -0.9));
+        Thread driveFifth = new Thread(() -> {
+            driveStraight(1, 7, contstant_angle, 0, 0.5, 0.05);
+            driveSide(-1, 97, contstant_angle, 500, 0.5, 0.05);
+            driveStraight(1, 55, contstant_angle, 500, 0.5, 0.05);
+            //driveStraight(-0.2, 5, contstant_angle, 0, 1, 0.05);
+        });
+
+        sliderMiddle3.start();
+        driveFifth.start();
+
+        try {
+            sliderMiddle3.join();
+            driveFifth.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //PLACE 3rd SPECIMEN
+        verticalUp(-2600, -1);//place specimen 1*/
+        VerClaw.setPosition(verclaw_open);//to open
+
+        //GO PARKING
+        driveDiagonal(1, 95);//Drive diagonal to the observation
+        driveSide(1, 80, contstant_angle, 5, 0.8, 0.05);//Drive sideways
 
     }
 
@@ -309,6 +385,47 @@ public class Specimen3Final extends LinearOpMode {
         movestop();
     }
     //______________________________Side*_____________________________________//
+
+    //___________________________*Diagonal____________________________________//
+
+    public void driveDiagonal(double driveSpeed, double distance) {
+        encoders();
+
+        int targetTicks = (int) (PULSES_PER_CM * distance);
+
+        double slowdownStart = targetTicks * 0.7;
+
+        while (opModeIsActive() && Math.abs(RightFront.getCurrentPosition()) < targetTicks) {
+            int currentTicks = Math.abs(RightFront.getCurrentPosition());
+            double slowdownFactor = 1.0;
+
+            if (currentTicks > slowdownStart) {
+                slowdownFactor = Math.max(0.2, 1.0 - ((currentTicks - slowdownStart) / (targetTicks - slowdownStart)));
+            }
+
+            double adjustedSpeed = driveSpeed * slowdownFactor;
+
+            telemetry.addData("Position", "%5d / %5d", currentTicks, targetTicks);
+            telemetry.addData("Speed Factor", "%.2f", slowdownFactor);
+            telemetry.update();
+
+            LeftFront.setPower(0);
+            LeftBack.setPower(-adjustedSpeed);
+            RightFront.setPower(-adjustedSpeed);
+            RightBack.setPower(0);
+        }
+
+        LeftBack.setPower(-0.05);
+        RightFront.setPower(-0.05);
+
+        sleep(200);
+
+        LeftFront.setPower(0);
+        LeftBack.setPower(0);
+        RightFront.setPower(0);
+        RightBack.setPower(0);
+    }
+    //___________________________Diagonal*____________________________________//
 
 
     //___________________________VerticalPosition*____________________________//
