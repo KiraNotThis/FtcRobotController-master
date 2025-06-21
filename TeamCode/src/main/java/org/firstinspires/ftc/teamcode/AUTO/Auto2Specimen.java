@@ -11,14 +11,10 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-
 @Disabled
-@Autonomous(name = "Auto 2 Specimen", group = "Robot")
+@Autonomous(name="Auto 2 Specimen", group="Robot")
 public class Auto2Specimen extends LinearOpMode {
-
-
     @Override
     public void runOpMode() {
         touchVertical = hardwareMap.get(TouchSensor.class, "sensor_touch");
@@ -58,8 +54,18 @@ public class Auto2Specimen extends LinearOpMode {
 
         Vertical.setDirection(DcMotor.Direction.FORWARD);
 
-        extracted();
+        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu.resetYaw();
@@ -117,8 +123,8 @@ public class Auto2Specimen extends LinearOpMode {
         driveSide(0.6, 40);
 
     }
-
-    public void driveRotate(double rotateSpeed, double angle) {
+    public void driveRotate(double rotateSpeed, double angle)
+    {
         imu.resetYaw();
 
         while (opModeIsActive() && Math.abs(getHeading()) < angle) {
@@ -131,20 +137,23 @@ public class Auto2Specimen extends LinearOpMode {
             RightFront.setPower(rotateSpeed);
             RightBack.setPower(rotateSpeed);
         }
-        movestop();
-    }
-
-
-    private void movestop() {
         LeftFront.setPower(0);
         LeftBack.setPower(0);
         RightFront.setPower(0);
         RightBack.setPower(0);
-        sleep(500);
+        sleep(300);
     }
+    public void driveStraight(double driveSpeed, double distance)
+    {
+        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    public void driveStraight(double driveSpeed, double distance) {
-        extracted();
+        LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < PULSES_PER_CM * distance) {
 
@@ -157,10 +166,14 @@ public class Auto2Specimen extends LinearOpMode {
             RightBack.setPower(driveSpeed);
 
         }
-        stop();
+        LeftFront.setPower(0);
+        LeftBack.setPower(0);
+        RightFront.setPower(0);
+        RightBack.setPower(0);
+        sleep(500);
     }
-
-    private void extracted() {//reseting encoders
+    public void driveSide(double driveSpeed, double distance)
+    {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -170,10 +183,6 @@ public class Auto2Specimen extends LinearOpMode {
         LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void driveSide(double driveSpeed, double distance) {
-        extracted();
 
         while (opModeIsActive() && Math.abs(LeftFront.getCurrentPosition()) < PULSES_PER_CM * distance) {
 
@@ -186,11 +195,23 @@ public class Auto2Specimen extends LinearOpMode {
             RightBack.setPower(driveSpeed);
 
         }
-        movestop();
+        LeftFront.setPower(0);
+        LeftBack.setPower(0);
+        RightFront.setPower(0);
+        RightBack.setPower(0);
+        sleep(500);
     }
+    public void driveDiagonal(double driveSpeed, double distance)
+    {
+        LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    public void driveDiagonal(double driveSpeed, double distance) {
-        extracted();
+        LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive() && Math.abs(RightFront.getCurrentPosition()) < PULSES_PER_CM * distance) {
 
@@ -203,10 +224,13 @@ public class Auto2Specimen extends LinearOpMode {
             RightBack.setPower(0);
 
         }
-        movestop();
+        LeftFront.setPower(0);
+        LeftBack.setPower(0);
+        RightFront.setPower(0);
+        RightBack.setPower(0);
+        sleep(500);
     }
-
-    public void VerSliderPosition(double position, double power) {
+    public void VerSliderPosition(double position, double power){
         Vertical.setTargetPosition((int) position);
         Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Vertical.setPower(power);
@@ -217,7 +241,7 @@ public class Auto2Specimen extends LinearOpMode {
         }
     }
 
-    public void VerSliderZero(double power) {
+    public void VerSliderZero(double power){
 
         while (opModeIsActive() && !touchVertical.isPressed()) {
             Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -229,8 +253,8 @@ public class Auto2Specimen extends LinearOpMode {
         // Stop the vertical motor once the sensor is pressed
         Vertical.setPower(0);
     }
-
-    public double getHeading() {
+    public double getHeading()
+    {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }

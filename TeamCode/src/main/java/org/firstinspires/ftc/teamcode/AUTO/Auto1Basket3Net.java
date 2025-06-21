@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.AUTO;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -10,29 +11,10 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
+@Disabled
 @Autonomous(name = "Auto 1 basket 3 Net ", group = "Robot")
 public class Auto1Basket3Net extends LinearOpMode {
-    private DcMotor LeftFront;
-    private DcMotor LeftBack;
-    private DcMotor RightFront;
-    private DcMotor RightBack;
-    private DcMotor Vertical;
-    private DcMotor Horizontal;
-    private IMU imu;
-
-
-    private Servo VerRotate;
-    private Servo VerClaw;
-    private Servo HorRotate;
-    private Servo HorClaw;
-    static final double WHEEL_DIAMETER = 10.4;
-    static final double PULSES = 537.7;
-    static final double PI = 3.1415;
-    static final double PULSES_PER_CM = PULSES / (WHEEL_DIAMETER * PI);
-    TouchSensor touchVertical;
-
-
     @Override
     public void runOpMode() {
         imu = hardwareMap.get(IMU.class, "imu");
@@ -143,23 +125,6 @@ public class Auto1Basket3Net extends LinearOpMode {
         driveStraight(0.3, 40, contstant_angle - 180, 0, 1, 0.05);
         VerClaw.setPosition(0.3);
         sleep(500);
-            /*sleep(500);
-            VerClaw.setPosition(0.6);// close VerClaw
-            sleep(500);
-            HorClaw.setPosition(0.27);//open horizontal claw
-            sleep(500);
-            VerRotate.setPosition(0.11);//rotate to put in the basket
-            verticalUp(-4300, -1);
-
-            //GO TO THE BASKET
-            driveSide(-0.6,45, contstant_angle, 20, 0.5, 0.05 );
-            driveStraight(-0.4, 69,contstant_angle-90, 15, 0.5, 0.05);
-            /*driveStraight(-0.6, contstant_angle);
-            VerClaw.setPosition(0.3);//open the VerClaw
-            driveStraight(0.4, 10, contstant_angle-90, 0, 1, 0.05);
-            verticalZero(1);*/
-
-
     }
     //______________________________*Straight_________________________________//
 
