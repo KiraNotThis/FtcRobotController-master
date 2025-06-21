@@ -32,4 +32,13 @@ public class Globals {
     public static final double PULSES = 537.7;
     public static final double PI = 3.1415;
     public static final double PULSES_PER_CM = PULSES / (WHEEL_DIAMETER * PI);
+    public static final double verclaw_open = 0.4;
+    public static final double verclaw_close = 0.51;
+    public static final double verrotate_chamber = 0.12;
+    public static final double verrotate_player = 0.78;
+    public static final double horclaw_open = 0.3;
+    public static final double horclaw_close = 0.5;
+    public static final double horrotate_ground = 1;
+    public static final double horrotate_middle = 0.55;
+    public static final double horrotate_lying = 0.08;
 }
