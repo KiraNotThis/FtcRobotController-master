@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Autonomous(name = "Basket1", group = "Robot")
-public class Basket1 extends LinearOpMode {
+@Autonomous(name = "Basket2", group = "Robot")
+public class Basket2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -22,7 +22,7 @@ public class Basket1 extends LinearOpMode {
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         );
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
@@ -48,9 +48,9 @@ public class Basket1 extends LinearOpMode {
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
 
-        VerRotate.setPosition(verrotate_player);
+        VerRotate.setPosition(verrotate_chamber);
         VerClaw.setPosition(verclaw_close);
-        HorRotate.setPosition(horrotate_middle);
+        HorRotate.setPosition(0.55);
         HorClaw.setPosition(horclaw_open);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -77,13 +77,35 @@ public class Basket1 extends LinearOpMode {
         waitForStart();
         double constant_angle = getHeading();//the first ideal zero of robot
 
-        driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
-        verticalUp(-3500, -0.5);
-        driveStraight(-0.5,30,constant_angle,0,1, 0.05);
+        Thread sliderBasket1 = new Thread(() -> verticalUp(-4100, -0.5));
+        Thread driveFirst = new Thread(() -> {
+            driveSide(0.5, 10, constant_angle, 0, 1, 0.05);
+            driveStraight(0.5,35,constant_angle,0,1, 0.05);
+        });
+
+        sliderBasket1.start();
+        driveFirst.start();
+
+        try {
+            sliderBasket1.join();
+            driveFirst.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         VerClaw.setPosition(verclaw_open);
+
+
+
+        driveStraight(-0.5,10,constant_angle-90,0,1,0.05);
+
+        driveStraight(0.5,77,constant_angle-90,0,1, 0.05);
+
+        horizontalForward(-600, -0.5);
+        HorRotate.setPosition(horrotate_ground);
         sleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
+        HorClaw.setPosition(horclaw_close);
+
+
 
     }
 
