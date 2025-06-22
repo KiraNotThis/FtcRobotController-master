@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.TELEOP;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.Horizontal;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.Vertical;
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchHorizontal;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.verrotate_player;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -51,7 +57,7 @@ public class SliderTest extends LinearOpMode {
         VerClaw.setPosition(0.4);
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.17);
+        VerRotate.setPosition(verrotate_player);
 
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
         HorClaw.setPosition(0.2);
@@ -66,6 +72,12 @@ public class SliderTest extends LinearOpMode {
 
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double forward;
         double rotate;
@@ -90,56 +102,12 @@ public class SliderTest extends LinearOpMode {
             RightBack.setPower((forward - rotate + side) * speed);
 
             Horizontal.setPower(horizontal * x);
+            Vertical.setPower(vertical * x);
 
 
 
             // Update Vertical motor target positions based on dpad inputs
-            if (gamepad2.dpad_down) { // middle of chambers
-                Vertical.setTargetPosition(-1700);
-                Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
-            }
 
-            if (gamepad2.dpad_right) { // high chamber
-                Vertical.setTargetPosition(-3000);
-                Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
-            }
-
-            if (gamepad2.dpad_up) { // high basket
-                Vertical.setTargetPosition(-4100);
-                Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
-            }
-
-            if (gamepad2.dpad_left) { // low basket
-                Vertical.setTargetPosition(-1500);
-                Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
-            }
-
-            if (gamepad2.left_bumper) {
-                while (opModeIsActive() && !touchSensor.isPressed()) {
-                    Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(0.6); // Keep moving down
-                }
-                Vertical.setPower(0);
-            }
-
-            if (gamepad2.right_bumper) {
-                VerClaw.setPosition(0.1); // open
-                sleep(400);
-                VerClaw.setPosition(0.32); // close
-                sleep(400);
-                VerRotate.setPosition(0.81); // rotate
-                sleep(600);
-                VerClaw.setPosition(0.1);
-                while (opModeIsActive() && !touchSensor.isPressed()) {
-                    Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(0.6); // Keep moving down
-                }
-                Vertical.setPower(0);
-            }
 
 
 
@@ -149,7 +117,7 @@ public class SliderTest extends LinearOpMode {
                 telemetry.update();
             }
             else {
-                telemetry.addData("Touch Sensor", " NOT Pressed");
+                telemetry.addData("Vertical", Vertical.getCurrentPosition());
                 telemetry.update();
             }
         }

@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Autonomous(name = "Specimen 333", group = "Robot")
-public class Specimen3 extends LinearOpMode {
+@Autonomous(name = "Basket1", group = "Robot")
+public class Basket1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -22,14 +22,13 @@ public class Specimen3 extends LinearOpMode {
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
         );
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
         imu.initialize(parameters);
         imu.resetYaw();
         sleep(300);
-        //Define orientation of a robot
 
         // IMU settings
 
@@ -37,6 +36,7 @@ public class Specimen3 extends LinearOpMode {
         LeftBack = hardwareMap.get(DcMotor.class, "left_back");
         RightFront = hardwareMap.get(DcMotor.class, "right_front");
         RightBack = hardwareMap.get(DcMotor.class, "right_back");
+
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
         Horizontal = hardwareMap.get(DcMotor.class, "Horizontal");
 
@@ -48,10 +48,10 @@ public class Specimen3 extends LinearOpMode {
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
 
-        VerRotate.setPosition(0.12);
-        VerClaw.setPosition(0.51);
-        HorRotate.setPosition(0.08);
-        HorClaw.setPosition(0.3);
+        VerRotate.setPosition(verrotate_player);
+        VerClaw.setPosition(verclaw_close);
+        HorRotate.setPosition(horrotate_middle);
+        HorClaw.setPosition(horclaw_open);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -61,11 +61,7 @@ public class Specimen3 extends LinearOpMode {
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
 
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         encoders();
         while (!isStarted()) {
@@ -79,104 +75,14 @@ public class Specimen3 extends LinearOpMode {
         }
 
         waitForStart();
-        double contstant_angle = getHeading();//the first ideal zero of robot
+        double constant_angle = getHeading();//the first ideal zero of robot
 
-        Thread sliderMiddle1 = new Thread(() -> verticalUp(-1500, -0.9));
-        Thread driveFirst = new Thread(() -> {
-            driveStraight(1, 62, contstant_angle, 500, 0.45, 0.05);
-        });
-
-        sliderMiddle1.start();
-        driveFirst.start();
-
-        try {
-            sliderMiddle1.join();
-            driveFirst.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //PLACE 1st SPECIMEN
-        verticalUp(-2600, -1);//place specimen 1
-        VerClaw.setPosition(0.4);//to open
-
-        //GO FOR THE SAMPLE
-        Thread sliderZero1 = new Thread(() -> verticalZero(1));
-        Thread driveSecond = new Thread(() -> {
-            driveStraight(-0.3, 13, contstant_angle, 0, 1, 0.05);//Drive back
-            sleep(50);
-            driveSide(1, 145, contstant_angle, 500, 0.5, 0.05);
-        });
-
-        sliderZero1.start();
-        driveSecond.start();
-
-        try {
-            sliderZero1.join();
-            driveSecond.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-
-        horizontalForward(-600, -0.7);
-
-        HorRotate.setPosition(1);//rotate to the sample
+        driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
+        verticalUp(-3500, -0.5);
+        driveStraight(-0.5,30,constant_angle,0,1, 0.05);
+        VerClaw.setPosition(verclaw_open);
         sleep(500);
-        HorClaw.setPosition(0.5);//close claw
-        sleep(500);
-        HorRotate.setPosition(0.74);//rotate to the sample
-        sleep(500);
-
-        Thread horizontalForward = new Thread(() -> {
-            horizontalForward(100, 0.7);
-            VerRotate.setPosition(0.78);
-
-        });
-        Thread driveThird = new Thread(() -> {
-            driveStraight(1, 105, contstant_angle - 135, 0, 0.9, 0.05);
-        });
-
-        horizontalForward.start();
-        driveThird.start();
-
-        try {
-            horizontalForward.join();
-            driveThird.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-
-        HorClaw.setPosition(0.3);//open claw
-        sleep(500);
-
-        Thread rotate = new Thread(() -> {
-
-            HorRotate.setPosition(0.55);
-            horizontalForward(450, 0.7);
-
-        });
-
-        Thread drive4 = new Thread(() -> {
-            driveStraight(-1, 10, contstant_angle - 135, 0, 1, 0.05);
-            driveStraight(-1, 87, contstant_angle, 0, 1, 0.05);
-        });
-
-        rotate.start();
-        drive4.start();
-
-        try {
-            rotate.join();
-            drive4.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        driveStraight(-0.3, 9, contstant_angle, 0, 1, 0.05);
-        VerClaw.setPosition(0.52);//close the claw
+        VerRotate.setPosition(verrotate_chamber);
         sleep(500);
 
     }
@@ -186,11 +92,15 @@ public class Specimen3 extends LinearOpMode {
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //______________________________*Straight_________________________________//

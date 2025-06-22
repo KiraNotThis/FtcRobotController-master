@@ -1,19 +1,6 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.Horizontal;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.PULSES_PER_CM;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerClaw;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerRotate;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.Vertical;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.imu;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchHorizontal;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchVertical;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -134,6 +121,7 @@ public class Specimen3Final extends LinearOpMode {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }*/
+
 
 
 

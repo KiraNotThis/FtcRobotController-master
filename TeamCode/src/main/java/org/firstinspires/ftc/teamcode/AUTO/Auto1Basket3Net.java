@@ -88,8 +88,8 @@ public class Auto1Basket3Net extends LinearOpMode {
         telemetry.update();
         //GO TO THE BASKET 1
         driveSide(0.2, 4, contstant_angle, 0, 1, 0.05);
-        verticalUp(-4300, -1);//let the VerSlider go up
-        driveStraight(0.6, 32, contstant_angle, 0, 1, 0.05);
+        verticalUp(-3500, -1);//let the VerSlider go up
+        /*driveStraight(0.6, 32, contstant_angle, 0, 1, 0.05);
         sleep(200);
         //PLACE 1ST SAMPLE IN BASKET
         VerClaw.setPosition(0.3);//open the VerClaw
@@ -124,7 +124,7 @@ public class Auto1Basket3Net extends LinearOpMode {
 
         driveStraight(0.3, 40, contstant_angle - 180, 0, 1, 0.05);
         VerClaw.setPosition(0.3);
-        sleep(500);
+        sleep(500);*/
     }
     //______________________________*Straight_________________________________//
 
