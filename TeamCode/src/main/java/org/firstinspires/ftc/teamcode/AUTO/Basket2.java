@@ -22,7 +22,7 @@ public class Basket2 extends LinearOpMode {
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
         );
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
@@ -48,9 +48,9 @@ public class Basket2 extends LinearOpMode {
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
 
-        VerRotate.setPosition(verrotate_chamber);
+        VerRotate.setPosition(verrotate_player);
         VerClaw.setPosition(verclaw_close);
-        HorRotate.setPosition(0.55);
+        HorRotate.setPosition(horrotate_middle);
         HorClaw.setPosition(horclaw_open);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -77,34 +77,24 @@ public class Basket2 extends LinearOpMode {
         waitForStart();
         double constant_angle = getHeading();//the first ideal zero of robot
 
-        Thread sliderBasket1 = new Thread(() -> verticalUp(-4100, -0.5));
-        Thread driveFirst = new Thread(() -> {
-            driveSide(0.5, 10, constant_angle, 0, 1, 0.05);
-            driveStraight(0.5,35,constant_angle,0,1, 0.05);
-        });
-
-        sliderBasket1.start();
-        driveFirst.start();
-
-        try {
-            sliderBasket1.join();
-            driveFirst.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
+        verticalUp(-3500, -0.5);
+        driveStraight(-0.5,30,constant_angle,0,1, 0.05);
         VerClaw.setPosition(verclaw_open);
-
-
-
-        driveStraight(-0.5,10,constant_angle-90,0,1,0.05);
-
-        driveStraight(0.5,77,constant_angle-90,0,1, 0.05);
-
-        horizontalForward(-600, -0.5);
-        HorRotate.setPosition(horrotate_ground);
         sleep(500);
-        HorClaw.setPosition(horclaw_close);
+        VerClaw.setPosition(verclaw_close);
+        VerRotate.setPosition(verrotate_chamber);
+        sleep(500);
+        verticalZero(0.5);//put 1 sample in the basket
 
+        driveStraight(0.5,26,constant_angle-90,0,1,0.05);
+        driveStraight(-0.5,73,constant_angle-90,0,1,0.05);//going for the 2nd sample
+
+        horizontalForward(-600,0.5);
+        HorRotate.setPosition(horrotate_ground);//rotate to the sample
+        sleep(500);
+        HorClaw.setPosition(horclaw_close);//close claw
+        sleep(500); //taking 2nd sample
 
 
     }
@@ -269,6 +259,21 @@ public class Basket2 extends LinearOpMode {
         }
         Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+    //___________________________VerticalZero*________________________________//
+    public void horizontalZero(double power) {
+
+        while (opModeIsActive() && !touchHorizontal.isPressed()) {
+            Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Horizontal.setPower(power);  // Keep moving down
+            telemetry.addData("Horizontal Motor", "Moving Down");
+            telemetry.update();
+        }
+
+        // Stop the vertical motor once the sensor is pressed
+        Horizontal.setPower(0);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    //___________________________VerticalZero*_______________________________//
     private void movestop() {
         LeftFront.setPower(0.05);
         LeftBack.setPower(0.05);
