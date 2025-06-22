@@ -64,6 +64,7 @@ public class Basket1 extends LinearOpMode {
 
 
         encoders();
+        encodersVH();
         while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
@@ -78,29 +79,32 @@ public class Basket1 extends LinearOpMode {
         double constant_angle = getHeading();//the first ideal zero of robot
 
         driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
-        verticalUp(-3500, -0.5);
-        driveStraight(-0.5,30,constant_angle,0,1, 0.05);
+        verticalUp(-4200, -0.5);
+        sleep(500);
+        driveStraight(-0.5,35,constant_angle,0,1, 0.05);
         VerClaw.setPosition(verclaw_open);
         sleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
+        VerRotate.setPosition(0.26);
+        sleep(3000);
 
     }
+    private void encodersVH() {
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     private void encoders() {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //______________________________*Straight_________________________________//

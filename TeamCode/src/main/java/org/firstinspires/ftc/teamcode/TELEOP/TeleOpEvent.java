@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
+
 
 @TeleOp(name="TeleOp Event", group="Robot")
 public class TeleOpEvent extends LinearOpMode {
@@ -60,7 +62,7 @@ public class TeleOpEvent extends LinearOpMode {
 
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.78);
+        VerRotate.setPosition(0.84);
 
 
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
@@ -216,11 +218,11 @@ public class TeleOpEvent extends LinearOpMode {
 
             if(gamepad2.a && !aBefore){//Control Vertical Rotate
                 aBefore = true;
-                if(VerRotate.getPosition() == 0.78) {
+                if(VerRotate.getPosition() == 0.84) {
                     VerRotate.setPosition(0.12);
                 }
                 else{
-                    VerRotate.setPosition(0.78);
+                    VerRotate.setPosition(0.84);
                 }
             }
             aBefore = gamepad2.a;

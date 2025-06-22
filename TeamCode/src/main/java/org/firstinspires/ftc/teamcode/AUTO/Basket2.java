@@ -22,7 +22,7 @@ public class Basket2 extends LinearOpMode {
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         );
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
@@ -61,9 +61,16 @@ public class Basket2 extends LinearOpMode {
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
 
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
 
         encoders();
+        encodersVH();
         while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
@@ -78,41 +85,40 @@ public class Basket2 extends LinearOpMode {
         double constant_angle = getHeading();//the first ideal zero of robot
 
         driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
-        verticalUp(-3500, -0.5);
-        driveStraight(-0.5,30,constant_angle,0,1, 0.05);
-        VerClaw.setPosition(verclaw_open);
+        /*verticalUp(-4200, -0.5);
+        sleep(500);*/
+        driveStraight(-0.5,35, constant_angle,0,1, 0.05);
+        /*VerClaw.setPosition(verclaw_open);
         sleep(500);
         VerClaw.setPosition(verclaw_close);
-        VerRotate.setPosition(verrotate_chamber);
         sleep(500);
-        verticalZero(0.5);//put 1 sample in the basket
-
-        driveStraight(0.5,26,constant_angle-90,0,1,0.05);
-        driveStraight(-0.5,73,constant_angle-90,0,1,0.05);//going for the 2nd sample
-
-        horizontalForward(-600,0.5);
-        HorRotate.setPosition(horrotate_ground);//rotate to the sample
+        VerRotate.setPosition(0.26);
         sleep(500);
-        HorClaw.setPosition(horclaw_close);//close claw
-        sleep(500); //taking 2nd sample
+        verticalZero(0.5);//put 1 sample in the basket*/
+        driveSide(-0.5, 10, constant_angle, 0, 1, 0.05);
 
+        driveStraight(0.3,35, constant_angle+80,0,1,0.05);
+        horizontalForward(-2000,-0.5);
+        driveStraight(0.3,20, constant_angle+80,0,1,0.05);
 
     }
+    private void encodersVH() {
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     private void encoders() {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //______________________________*Straight_________________________________//
@@ -259,21 +265,6 @@ public class Basket2 extends LinearOpMode {
         }
         Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    //___________________________VerticalZero*________________________________//
-    public void horizontalZero(double power) {
-
-        while (opModeIsActive() && !touchHorizontal.isPressed()) {
-            Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Horizontal.setPower(power);  // Keep moving down
-            telemetry.addData("Horizontal Motor", "Moving Down");
-            telemetry.update();
-        }
-
-        // Stop the vertical motor once the sensor is pressed
-        Horizontal.setPower(0);
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-    //___________________________VerticalZero*_______________________________//
     private void movestop() {
         LeftFront.setPower(0.05);
         LeftBack.setPower(0.05);

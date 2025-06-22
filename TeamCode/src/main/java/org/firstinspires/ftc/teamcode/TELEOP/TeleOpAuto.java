@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-@Disabled
+
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 @TeleOp(name="TeleOp Auto", group="Robot")
 public class TeleOpAuto extends LinearOpMode {
     private DcMotor LeftFront = null;
@@ -31,6 +32,7 @@ public class TeleOpAuto extends LinearOpMode {
     boolean rbBefore = false;//changing direction
     double x = 0.7;
     double speed = 0.7;
+    int positionState = 0;
     TouchSensor touchSensor;
 
     @Override
@@ -46,16 +48,16 @@ public class TeleOpAuto extends LinearOpMode {
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
 
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
-        VerClaw.setPosition(0.6);
+        VerClaw.setPosition(verclaw_open);
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.7);
+        VerRotate.setPosition(verrotate_player);
 
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
-        HorClaw.setPosition(0.5);
+        HorClaw.setPosition(horclaw_open);
 
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.37);
+        HorRotate.setPosition(horrotate_middle);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -117,7 +119,7 @@ public class TeleOpAuto extends LinearOpMode {
             b1Before = gamepad1.b;
 
             if(gamepad2.dpad_right) {//middle of chambers
-                Vertical.setTargetPosition(-1600);
+                Vertical.setTargetPosition(-1400);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
             }
@@ -129,7 +131,7 @@ public class TeleOpAuto extends LinearOpMode {
             }
 
             if(gamepad2.dpad_left) {//high basket
-                Vertical.setTargetPosition(-4100);
+                Vertical.setTargetPosition(-4200);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
             }
@@ -153,13 +155,13 @@ public class TeleOpAuto extends LinearOpMode {
             telemetry.update();
 
             if(gamepad2.right_bumper) {//Preparing for taking specimen from observation zone
-                VerClaw.setPosition(0.4);//open
+                VerClaw.setPosition(verclaw_open);//open
                 sleep(500);
-                VerClaw.setPosition(0.6);//close
+                VerClaw.setPosition(verclaw_close);//close
                 sleep(500);
-                VerRotate.setPosition(0.7);//rotate
+                VerRotate.setPosition(verrotate_player);//rotate
                 sleep(600);
-                VerClaw.setPosition(0.4);
+                VerClaw.setPosition(verclaw_open);
 
                 while (opModeIsActive() && !touchSensor.isPressed()) {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -194,44 +196,51 @@ public class TeleOpAuto extends LinearOpMode {
 
             if(gamepad2.y && !yBefore){//Control Vertical Claw
                 yBefore = true;
-                if(VerClaw.getPosition() == 0.6) {
-                    VerClaw.setPosition(0.4);
+                if(VerClaw.getPosition() == verclaw_close) {
+                    VerClaw.setPosition(verclaw_open);
                 }
                 else{
-                    VerClaw.setPosition(0.6);
+                    VerClaw.setPosition(verclaw_close);
                 }
             }
             yBefore = gamepad2.y;
 
             if(gamepad2.a && !aBefore){//Control Vertical Rotate
                 aBefore = true;
-                if(VerRotate.getPosition() == 0.7) {
-                    VerRotate.setPosition(0.15);
+                if(VerRotate.getPosition() == verrotate_player) {
+                    VerRotate.setPosition(verrotate_chamber);
                 }
                 else{
-                    VerRotate.setPosition(0.7);
+                    VerRotate.setPosition(verrotate_player);
                 }
             }
             aBefore = gamepad2.a;
 
             if(gamepad2.x && !xBefore){//Control Horizontal Claw
                 xBefore = true;
-                if(HorClaw.getPosition() == 0.3) {
-                    HorClaw.setPosition(0.5);
+                if(HorClaw.getPosition() == horclaw_open) {
+                    HorClaw.setPosition(horclaw_close);
                 }
                 else{
-                    HorClaw.setPosition(0.3);
+                    HorClaw.setPosition(horclaw_open);
                 }
             }
             xBefore = gamepad2.x;
 
             if(gamepad2.b && !bBefore){//Control Horizontal Rotate
                 bBefore = true;
-                if(HorRotate.getPosition() == 0.37) {
-                    HorRotate.setPosition(1);
-                }
-                else{
-                    HorRotate.setPosition(0.37);
+                positionState = (positionState + 1) % 3; // циклическое переключение от 0 до 2
+
+                switch (positionState) {
+                    case 0:
+                        HorRotate.setPosition(horrotate_ground);
+                        break;
+                    case 1:
+                        HorRotate.setPosition(horrotate_middle);
+                        break;
+                    case 2:
+                        HorRotate.setPosition(horrotate_lying);
+                        break;
                 }
             }
             bBefore = gamepad2.b;

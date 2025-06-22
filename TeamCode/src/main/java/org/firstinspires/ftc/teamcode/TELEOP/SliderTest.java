@@ -1,13 +1,5 @@
 package org.firstinspires.ftc.teamcode.TELEOP;
 
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.Horizontal;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.Vertical;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchHorizontal;
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.verrotate_player;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 @TeleOp(name="SliderTest", group="Robot")
 public class SliderTest extends LinearOpMode {
     private DcMotor LeftFront = null;
@@ -54,16 +47,16 @@ public class SliderTest extends LinearOpMode {
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
         touchHorizontal = hardwareMap.get(TouchSensor.class, "sensor_touch_hor");
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
-        VerClaw.setPosition(0.4);
+        VerClaw.setPosition(verclaw_close);
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(verrotate_player);
+        VerRotate.setPosition(verrotate_chamber);
 
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
-        HorClaw.setPosition(0.2);
+        HorClaw.setPosition(horclaw_open);
 
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.45);
+        HorRotate.setPosition(0.08);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -72,9 +65,9 @@ public class SliderTest extends LinearOpMode {
 
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
+
         Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
         Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -108,18 +101,28 @@ public class SliderTest extends LinearOpMode {
 
             // Update Vertical motor target positions based on dpad inputs
 
-
+            if(gamepad2.left_bumper){//Slider in the Zero position
+                while (opModeIsActive() && !touchSensor.isPressed()) {
+                    Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    Vertical.setPower(1);  // Keep moving down
+                }
+                Vertical.setPower(0);
+                Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+            telemetry.addData("Vertical Motor Position", Vertical.getCurrentPosition());
+            telemetry.addData("Horizontal Motor Position", Horizontal.getCurrentPosition());
+            telemetry.update();
 
 
             // Telemetry for Vertical motor position
-            if (touchHorizontal.isPressed()) {
+            /*if (touchVertical.isPressed()) {
                 telemetry.addData("Touch Sensor", "Pressed");
                 telemetry.update();
             }
             else {
                 telemetry.addData("Vertical", Vertical.getCurrentPosition());
                 telemetry.update();
-            }
+            }*/
         }
     }
 }
