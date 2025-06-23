@@ -61,12 +61,7 @@ public class Specimen3Final extends LinearOpMode {
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
 
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        encodersVH();
         encoders();
         while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
@@ -194,6 +189,13 @@ public class Specimen3Final extends LinearOpMode {
         LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    private void encodersVH() {
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //______________________________*Straight_________________________________//

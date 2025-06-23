@@ -26,8 +26,7 @@ public class SpecimenTaking extends LinearOpMode {
         );
 
         IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
-        imu.initialize(parameters);
-        imu.resetYaw();
+        imu.initialize(parameters);        imu.resetYaw();
         sleep(300);
         //Define orientation of a robot
 
@@ -63,6 +62,7 @@ public class SpecimenTaking extends LinearOpMode {
         Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         encoders();
+        encodersVH();
         while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
@@ -111,7 +111,13 @@ public class SpecimenTaking extends LinearOpMode {
         sleep(500);
 
     }
+    private void encodersVH() {
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     private void encoders() {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

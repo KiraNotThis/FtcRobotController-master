@@ -61,14 +61,6 @@ public class Basket2 extends LinearOpMode {
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
 
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
         encoders();
         encodersVH();
         while (!isStarted()) {
@@ -85,7 +77,7 @@ public class Basket2 extends LinearOpMode {
         double constant_angle = getHeading();//the first ideal zero of robot
 
         driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
-        /*verticalUp(-4200, -0.5);
+        /*verticalUp(high_basket, -0.5);
         sleep(500);*/
         driveStraight(-0.5,35, constant_angle,0,1, 0.05);
         /*VerClaw.setPosition(verclaw_open);

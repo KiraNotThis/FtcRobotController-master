@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 //@Disabled
 @TeleOp(name="Claws Test", group="Robot")
 public class ClawsTest extends LinearOpMode {
@@ -49,16 +51,16 @@ public class ClawsTest extends LinearOpMode {
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
 
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
-        VerClaw.setPosition(0.8);
+        VerClaw.setPosition(verclaw_close);
 
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
-        VerRotate.setPosition(0.5);
+        VerRotate.setPosition(verrotate_player);
 
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
-        HorClaw.setPosition(0.2);
+        HorClaw.setPosition(horclaw_close);
 
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.45);
+        HorRotate.setPosition(horrotate_middle);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
@@ -100,21 +102,6 @@ public class ClawsTest extends LinearOpMode {
             telemetry.addData("VerRotate Position", VerRotate.getPosition());
             telemetry.update();
 
-            // Button Presses
-            /*if (gamepad2.right_bumper) {
-                VerClaw.setPosition(0.1); // open
-                sleep(400);
-                VerClaw.setPosition(0.32); // close
-                sleep(400);
-                VerRotate.setPosition(0.81); // rotate
-                sleep(600);
-                VerClaw.setPosition(0.1);
-                while (opModeIsActive() && !touchSensor.isPressed()) {
-                    Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(0.6); // Keep moving down
-                }
-                Vertical.setPower(0);
-            }*/
 
             if (gamepad2.y && !yBefore) {
                 yBefore = true;

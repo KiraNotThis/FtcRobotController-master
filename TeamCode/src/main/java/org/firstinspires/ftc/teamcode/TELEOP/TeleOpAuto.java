@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -59,10 +60,10 @@ public class TeleOpAuto extends LinearOpMode {
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
         HorRotate.setPosition(horrotate_middle);
 
-        LeftFront.setDirection(DcMotor.Direction.REVERSE);
-        LeftBack.setDirection(DcMotor.Direction.REVERSE);
-        RightFront.setDirection(DcMotor.Direction.FORWARD);
-        RightBack.setDirection(DcMotor.Direction.FORWARD);
+        LeftFront.setDirection(DcMotor.Direction.FORWARD);
+        LeftBack.setDirection(DcMotor.Direction.FORWARD);
+        RightFront.setDirection(DcMotor.Direction.REVERSE);
+        RightBack.setDirection(DcMotor.Direction.REVERSE);
 
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
@@ -119,25 +120,25 @@ public class TeleOpAuto extends LinearOpMode {
             b1Before = gamepad1.b;
 
             if(gamepad2.dpad_right) {//middle of chambers
-                Vertical.setTargetPosition(-1400);
+                Vertical.setTargetPosition(middle_chamber);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
             }
 
             if(gamepad2.dpad_up) {//high chamber
-                Vertical.setTargetPosition(-2600);
+                Vertical.setTargetPosition(high_chamber);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
             }
 
             if(gamepad2.dpad_left) {//high basket
-                Vertical.setTargetPosition(-4200);
+                Vertical.setTargetPosition(high_basket);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
             }
 
             if(gamepad2.dpad_down) {//low basket
-                Vertical.setTargetPosition(-1000);
+                Vertical.setTargetPosition(low_basket);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
 

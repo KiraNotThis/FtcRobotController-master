@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 @Disabled
 @Autonomous(name="Auto 2 Specimen", group="Robot")
-public class Auto2Specimen extends LinearOpMode {
+public class Specimen2 extends LinearOpMode {
     @Override
     public void runOpMode() {
         touchVertical = hardwareMap.get(TouchSensor.class, "sensor_touch");

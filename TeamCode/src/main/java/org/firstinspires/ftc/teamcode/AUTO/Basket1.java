@@ -79,7 +79,7 @@ public class Basket1 extends LinearOpMode {
         double constant_angle = getHeading();//the first ideal zero of robot
 
         driveSide(-0.5, 2, constant_angle, 0, 1, 0.05);
-        verticalUp(-4200, -0.5);
+        verticalUp(high_basket, -0.5);
         sleep(500);
         driveStraight(-0.5,35,constant_angle,0,1, 0.05);
         VerClaw.setPosition(verclaw_open);
@@ -239,18 +239,6 @@ public class Basket1 extends LinearOpMode {
     }
     //___________________________VerticalZero*_______________________________//
 
-    //___________________________HorizontalPosition*____________________________//
-    public void horizontalForward(double position, double power) {
-        Horizontal.setTargetPosition((int) position);
-        Horizontal.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Horizontal.setPower(power);
-
-        while (opModeIsActive() && Horizontal.isBusy()) {
-            telemetry.addData("Current Position", Horizontal.getCurrentPosition());
-            telemetry.update();
-        }
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
     private void movestop() {
         LeftFront.setPower(0.05);
         LeftBack.setPower(0.05);

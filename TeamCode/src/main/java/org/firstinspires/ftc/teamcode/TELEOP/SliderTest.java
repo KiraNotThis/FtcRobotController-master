@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 @TeleOp(name="SliderTest", group="Robot")
 public class SliderTest extends LinearOpMode {
@@ -56,7 +57,7 @@ public class SliderTest extends LinearOpMode {
         HorClaw.setPosition(horclaw_open);
 
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(0.08);
+        HorRotate.setPosition(horrotate_lying);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);
