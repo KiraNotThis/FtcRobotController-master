@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 @Disabled
 @Autonomous(name = "3 Specimen", group = "Robot")
-public class Specimen3All extends LinearOpMode {
+public class Specimen3Cyprus extends LinearOpMode {
 
     @Override
     public void runOpMode() {
