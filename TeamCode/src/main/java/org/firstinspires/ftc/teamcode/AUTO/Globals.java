@@ -45,6 +45,7 @@ public class Globals {
     public static final int middle_chamber = -1400;
     public static final int high_chamber = -2600;
     public static final int high_basket = -4200;
+    public static final int sample = -1550;
     public static final int low_basket = -1000;
 
 
