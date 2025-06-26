@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TELEOP;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
-
+@Disabled
 @TeleOp(name="TeleOp Event", group="Robot")
 public class TeleOpEvent extends LinearOpMode {
     private DcMotor LeftFront = null;

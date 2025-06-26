@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Autonomous(name = "Basket2 Safe", group = "Robot")
-public class Basket2_Safe extends LinearOpMode {
+@Autonomous(name = "New Basket3", group = "Robot")
+public class NewBasket2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -76,45 +76,44 @@ public class Basket2_Safe extends LinearOpMode {
         waitForStart();
         double constant_angle = getHeading();//the first ideal zero of robot
 
-        // Первый блок: подъем слайдера и движение
+        // Placing 1st sample
         Thread sliderBasket1 = new Thread(() -> {
-            if (opModeIsActive()) verticalUp(high_basket, -0.7);
+            if (opModeIsActive()) verticalUp(high_basket, -1);
         });
+        
         Thread driveFirst = new Thread(() -> {
-            if (opModeIsActive()) driveStraight(0.5, 30, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveSide(-0.5, 65, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveStraight(-0.5, 15, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(0.7, 30, constant_angle, 500, 0.6, 0.05);
+            if (opModeIsActive()) driveSide(-0.8, 65, constant_angle, 500, 0.7, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, way_basket, constant_angle, 0, 1, 0.05);
         });
+        
         sliderBasket1.start();
         driveFirst.start();
+        
         try {
             sliderBasket1.join();
             driveFirst.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+        
+        placingsample();
 
-// Операции с корзиной
-        VerRotate.setPosition(verrotate_player);
-        safeSleep(800);
-        VerClaw.setPosition(verclaw_open);
-        safeSleep(500);
-        VerClaw.setPosition(verclaw_close);
-        safeSleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        safeSleep(500);
-
-// Второй блок: сброс слайдера и движение к забору объекта
+        // Taking 2nd from the ground
         Thread sliderZero1 = new Thread(() -> {
-            if (opModeIsActive()) verticalZero(0.5);
+            if (opModeIsActive()) verticalZero(1);
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_open);
         });
+
         Thread driveSecond = new Thread(() -> {
-            if (opModeIsActive()) driveStraight(0.5, 15, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveSide(0.5, 7, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(0.5, way_basket, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveSide(0.5, way_sample_1, constant_angle, 0, 1, 0.05);
             if (opModeIsActive()) horizontalForward(sample, -0.5);
         });
+
         sliderZero1.start();
         driveSecond.start();
+
         try {
             sliderZero1.join();
             driveSecond.join();
@@ -122,26 +121,27 @@ public class Basket2_Safe extends LinearOpMode {
             Thread.currentThread().interrupt();
         }
 
-// Взять объект
-        HorRotate.setPosition(horrotate_ground);
-        safeSleep(500);
-        HorClaw.setPosition(horclaw_close);
-        safeSleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        safeSleep(500);
-        horizontalForward(-sample, 0.5);
+        takingsample();
 
-// Третий блок: перемещение и сброс объекта
+        //Transfer 2nd sample to VerClaw
         Thread sliderBasket2 = new Thread(() -> {
-            if (opModeIsActive()) verticalUp(high_basket, -0.7);
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_close);
+            safeSleep(500);
+            if (opModeIsActive()) HorClaw.setPosition(horclaw_open);
+            safeSleep(500);
+            if (opModeIsActive()) verticalUp(high_basket, -1);
+
         });
+
+        //Placing 2nd in the basket
         Thread driveThird = new Thread(() -> {
-            if (opModeIsActive()) driveSide(-0.5, 9, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveStraight(-0.5, 15, constant_angle, 0, 1, 0.05);
-            HorClaw.setPosition(horclaw_open);
+            if (opModeIsActive()) driveSide(-0.5, way_sample_1 + 5, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, way_basket, constant_angle, 0, 1, 0.05);
         });
+
         sliderBasket2.start();
         driveThird.start();
+
         try {
             sliderBasket2.join();
             driveThird.join();
@@ -149,27 +149,23 @@ public class Basket2_Safe extends LinearOpMode {
             Thread.currentThread().interrupt();
         }
 
-// Сброс в корзину
-        VerRotate.setPosition(verrotate_player);
-        safeSleep(800);
-        VerClaw.setPosition(verclaw_open);
-        safeSleep(500);
-        VerClaw.setPosition(verclaw_close);
-        safeSleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        safeSleep(500);
+        placingsample();
 
-// Четвёртый блок: забор нового объекта
+        //Taking 3rd sample from the ground
         Thread sliderZero2 = new Thread(() -> {
-            if (opModeIsActive()) verticalZero(0.5);
+            if (opModeIsActive()) verticalZero(1);
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_open);
         });
+
         Thread driveFourth = new Thread(() -> {
-            if (opModeIsActive()) driveStraight(0.5, 15, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveSide(0.5, 33, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(0.5, way_basket, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveSide(0.5, way_sample_2, constant_angle, 0, 1, 0.05);
             if (opModeIsActive()) horizontalForward(sample, -0.5);
         });
+
         sliderZero2.start();
         driveFourth.start();
+
         try {
             sliderZero2.join();
             driveFourth.join();
@@ -177,25 +173,26 @@ public class Basket2_Safe extends LinearOpMode {
             Thread.currentThread().interrupt();
         }
 
-// Взять объект
-        HorRotate.setPosition(horrotate_ground);
-        safeSleep(500);
-        HorClaw.setPosition(horclaw_close);
-        safeSleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        safeSleep(500);
-        horizontalForward(-sample, 0.5);
+        takingsample();
 
-// Пятый блок: финальное размещение
+        //Transfer 3rd sample to VerClaw
         Thread sliderBasket3 = new Thread(() -> {
-            if (opModeIsActive()) verticalUp(high_basket, -0.7);
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_close);
+            safeSleep(500);
+            if (opModeIsActive()) HorClaw.setPosition(horclaw_open);
+            safeSleep(500);
+            if (opModeIsActive()) verticalUp(high_basket, -1);
         });
+
+        //Placing 3rd sample in the basket
         Thread driveFifth = new Thread(() -> {
-            if (opModeIsActive()) driveSide(-0.5, 35, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveStraight(-0.5, 15, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveSide(-0.5, way_sample_2 + 5, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, way_basket, constant_angle, 0, 1, 0.05);
         });
+
         sliderBasket3.start();
         driveFifth.start();
+
         try {
             sliderBasket3.join();
             driveFifth.join();
@@ -203,29 +200,20 @@ public class Basket2_Safe extends LinearOpMode {
             Thread.currentThread().interrupt();
         }
 
-// Последний сброс
-        VerRotate.setPosition(verrotate_player);
-        safeSleep(800);
-        VerClaw.setPosition(verclaw_open);
-        safeSleep(500);
-        VerClaw.setPosition(verclaw_close);
-        safeSleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        safeSleep(500);
+        placingsample();
 
 
 
     }
 
     private void takingsample() {
-        horizontalForward(sample,-0.5);
         HorRotate.setPosition(horrotate_ground);
-        sleep(500);
+        safeSleep(500);
         HorClaw.setPosition(horclaw_close);
-        sleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        sleep(500);
-        horizontalForward(-sample,0.5);
+        safeSleep(500);
+        HorRotate.setPosition(horrotate_transfer);
+        safeSleep(500);
+        horizontalForward(transfer, 0.5);
     }
     private void safeSleep(long millis) {
         long endTime = System.currentTimeMillis() + millis;
@@ -235,19 +223,15 @@ public class Basket2_Safe extends LinearOpMode {
     }
 
 
-    private void placingsample(double constant_angle) {
-        driveStraight(-0.5,15, constant_angle,0,1, 0.05);
-        verticalUp(high_basket, -0.5);
+    private void placingsample() {
         VerRotate.setPosition(verrotate_player);
-        sleep(800);
+        safeSleep(800);
         VerClaw.setPosition(verclaw_open);
-        sleep(500);
+        safeSleep(500);
         VerClaw.setPosition(verclaw_close);
-        sleep(500);
+        safeSleep(500);
         VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
-        verticalZero(0.5);
-        driveStraight(0.5,15, constant_angle,0,1, 0.05);
+        safeSleep(500);
     }
 
     private void encodersVH() {

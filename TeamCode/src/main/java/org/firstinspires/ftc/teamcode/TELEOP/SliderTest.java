@@ -57,7 +57,7 @@ public class SliderTest extends LinearOpMode {
         HorClaw.setPosition(horclaw_open);
 
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
-        HorRotate.setPosition(horrotate_lying);
+        HorRotate.setPosition(horrotate_middle);
 
         LeftFront.setDirection(DcMotor.Direction.REVERSE);
         LeftBack.setDirection(DcMotor.Direction.REVERSE);

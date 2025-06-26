@@ -76,175 +76,163 @@ public class Basket2 extends LinearOpMode {
         waitForStart();
         double constant_angle = getHeading();//the first ideal zero of robot
 
-        Thread sliderBasket = new Thread(() -> verticalUp(high_basket, -0.7));
-        Thread driveFirst = new Thread(() -> {
-            driveStraight(0.5,30, constant_angle,0,1, 0.05);
-            driveSide(-0.5,65, constant_angle,0,1, 0.05);
-
-            driveStraight(-0.5,15, constant_angle,0,1, 0.05);
+        // Первый блок: подъем слайдера и движение
+        Thread sliderBasket1 = new Thread(() -> {
+            if (opModeIsActive()) verticalUp(high_basket, -1);
         });
-
-        sliderBasket.start();
+        
+        Thread driveFirst = new Thread(() -> {
+            if (opModeIsActive()) driveStraight(0.7, 30, constant_angle, 500, 0.6, 0.05);
+            if (opModeIsActive()) driveSide(-0.8, 65, constant_angle, 500, 0.7, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, 19, constant_angle, 0, 1, 0.05);
+        });
+        
+        sliderBasket1.start();
         driveFirst.start();
-
+        
         try {
-            sliderBasket.join();
+            sliderBasket1.join();
             driveFirst.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
-
-        VerRotate.setPosition(verrotate_player);
-        sleep(800);
-        VerClaw.setPosition(verclaw_open);
-        sleep(500);
-        VerClaw.setPosition(verclaw_close);
-        sleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
-
-        Thread sliderZero = new Thread(() -> verticalZero(0.5));
-        Thread driveSecond = new Thread(() -> {
-            driveStraight(0.5,15, constant_angle,0,1, 0.05);
-            driveSide(0.5,7, constant_angle,0,1, 0.05);
-            horizontalForward(sample,-0.5);
+        
+        placingsample();
+// Второй блок: сброс слайдера и движение к забору объекта
+        Thread sliderZero1 = new Thread(() -> {
+            if (opModeIsActive()) verticalZero(1);
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_open);
         });
 
-        sliderZero.start();
+        Thread driveSecond = new Thread(() -> {
+            if (opModeIsActive()) driveStraight(0.5, 17, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveSide(0.5, 7, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) horizontalForward(sample, -0.5);
+        });
+
+        sliderZero1.start();
         driveSecond.start();
 
         try {
-            sliderZero.join();
+            sliderZero1.join();
             driveSecond.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
 
-        HorRotate.setPosition(horrotate_ground);
-        sleep(500);
-        HorClaw.setPosition(horclaw_close);
-        sleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        sleep(500);
-        horizontalForward(-sample,0.5);
+        takingsample();
 
-        Thread driveThird = new Thread(() -> {
-            driveSide(-0.5,9, constant_angle,0,1, 0.05);
-            driveStraight(-0.5,15, constant_angle,0,1, 0.05);
-            HorClaw.setPosition(horclaw_open);
+
+// Третий блок: перемещение и сброс объекта
+        Thread sliderBasket2 = new Thread(() -> {
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_close);
+            safeSleep(500);
+            if (opModeIsActive()) HorClaw.setPosition(horclaw_open);
+            safeSleep(500);
+            if (opModeIsActive()) verticalUp(high_basket, -1);
 
         });
 
-        sliderBasket.start();
+        Thread driveThird = new Thread(() -> {
+            if (opModeIsActive()) driveSide(-0.5, 10, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, 17, constant_angle, 0, 1, 0.05);
+        });
+
+        sliderBasket2.start();
         driveThird.start();
 
         try {
-            sliderBasket.join();
+            sliderBasket2.join();
             driveThird.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
 
-        VerRotate.setPosition(verrotate_player);
-        sleep(800);
-        VerClaw.setPosition(verclaw_open);
-        sleep(500);
-        VerClaw.setPosition(verclaw_close);
-        sleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
+// Сброс в корзину
+        placingsample();
 
-        Thread driveFourth = new Thread(() -> {
-            driveStraight(0.5,15, constant_angle,0,1, 0.05);
-            driveSide(0.5,33, constant_angle,0,1, 0.05);
-            horizontalForward(sample,-0.5);
+// Четвёртый блок: забор нового объекта
+        Thread sliderZero2 = new Thread(() -> {
+            if (opModeIsActive()) verticalZero(1);
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_open);
         });
 
-        sliderZero.start();
+        Thread driveFourth = new Thread(() -> {
+            if (opModeIsActive()) driveStraight(0.5, 9, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveSide(0.5, 30, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) horizontalForward(sample, -0.5);
+        });
+
+        sliderZero2.start();
         driveFourth.start();
 
         try {
-            sliderZero.join();
+            sliderZero2.join();
             driveFourth.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
 
-        HorRotate.setPosition(horrotate_ground);
-        sleep(500);
-        HorClaw.setPosition(horclaw_close);
-        sleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        sleep(500);
-        horizontalForward(-sample,0.5);
+// Взять объект
+        takingsample();
 
-        Thread driveFifth = new Thread(() -> {
-            driveSide(-0.5,35, constant_angle,0,1, 0.05);
-            driveStraight(-0.5,15, constant_angle,0,1, 0.05);
+// Пятый блок: финальное размещение
+        Thread sliderBasket3 = new Thread(() -> {
+            if (opModeIsActive()) VerClaw.setPosition(verclaw_close);
+            safeSleep(500);
+            if (opModeIsActive()) HorClaw.setPosition(horclaw_open);
+            safeSleep(500);
+            if (opModeIsActive()) verticalUp(high_basket, -1);
         });
 
-        sliderBasket.start();
-        driveFirst.start();
+        Thread driveFifth = new Thread(() -> {
+            if (opModeIsActive()) driveSide(-0.5, 35, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, 15, constant_angle, 0, 1, 0.05);
+        });
+
+        sliderBasket3.start();
+        driveFifth.start();
 
         try {
-            sliderBasket.join();
-            driveFirst.join();
+            sliderBasket3.join();
+            driveFifth.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
 
-        VerRotate.setPosition(verrotate_player);
-        sleep(800);
-        VerClaw.setPosition(verclaw_open);
-        sleep(500);
-        VerClaw.setPosition(verclaw_close);
-        sleep(500);
-        VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
+// Последний сброс
+        placingsample();
 
-        /*driveStraight(0.5,30, constant_angle,0,1, 0.05);
-        driveSide(-0.5,65, constant_angle,0,1, 0.05);
 
-        placingsample(constant_angle);
-
-        driveSide(0.5,7, constant_angle,0,1, 0.05);
-        takingsample();
-        driveSide(-0.5,9, constant_angle,0,1, 0.05);
-        HorClaw.setPosition(horclaw_open);
-        placingsample(constant_angle);
-
-        driveSide(0.5,33, constant_angle,0,1, 0.05);
-        takingsample();
-        driveSide(-0.5,35, constant_angle,0,1, 0.05);
-
-        placingsample(constant_angle);*/
 
     }
 
     private void takingsample() {
-        horizontalForward(sample,-0.5);
         HorRotate.setPosition(horrotate_ground);
-        sleep(500);
+        safeSleep(500);
         HorClaw.setPosition(horclaw_close);
-        sleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        sleep(500);
-        horizontalForward(-sample,0.5);
+        safeSleep(500);
+        HorRotate.setPosition(horrotate_transfer);
+        safeSleep(500);
+        horizontalForward(transfer, 0.5);
+    }
+    private void safeSleep(long millis) {
+        long endTime = System.currentTimeMillis() + millis;
+        while (opModeIsActive() && System.currentTimeMillis() < endTime) {
+            sleep(10);
+        }
     }
 
-    private void placingsample(double constant_angle) {
-        driveStraight(-0.5,15, constant_angle,0,1, 0.05);
-        verticalUp(high_basket, -0.5);
+
+    private void placingsample() {
         VerRotate.setPosition(verrotate_player);
-        sleep(800);
+        safeSleep(800);
         VerClaw.setPosition(verclaw_open);
-        sleep(500);
+        safeSleep(500);
         VerClaw.setPosition(verclaw_close);
-        sleep(500);
+        safeSleep(500);
         VerRotate.setPosition(verrotate_chamber);
-        sleep(500);
-        verticalZero(0.5);
-        driveStraight(0.5,15, constant_angle,0,1, 0.05);
+        safeSleep(500);
     }
 
     private void encodersVH() {

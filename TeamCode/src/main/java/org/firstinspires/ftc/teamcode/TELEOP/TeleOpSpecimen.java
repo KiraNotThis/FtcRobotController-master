@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.TELEOP;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Disabled
-@TeleOp(name="TeleOp Auto", group="Robot")
-public class TeleOpAuto extends LinearOpMode {
+
+@TeleOp(name = "TeleOp Specimen", group = "Robot")
+public class TeleOpSpecimen extends LinearOpMode {
     private DcMotor LeftFront = null;
     private DcMotor LeftBack = null;
     private DcMotor RightFront = null;
@@ -25,17 +23,27 @@ public class TeleOpAuto extends LinearOpMode {
     private Servo HorClaw;
     private Servo HorRotate;
 
+    private TouchSensor touchSensor;
+
+    // Кнопки
     boolean aBefore = false;
     boolean bBefore = false;
     boolean xBefore = false;
     boolean yBefore = false;
     boolean b1Before = false;
-    boolean lbBefore = false; //changing speed
-    boolean rbBefore = false;//changing direction
+    boolean lbBefore = false;
+    boolean rbBefore = false;
+
+    // Логика
     double x = 0.7;
     double speed = 0.8;
     int positionState = 0;
-    TouchSensor touchSensor;
+
+    // Флаги состояния
+    boolean horClawClosed = false;
+    boolean verClawClosed = false;
+    boolean verRotated = false;
+    boolean horRotated = false;
 
     @Override
     public void runOpMode() {
@@ -74,104 +82,92 @@ public class TeleOpAuto extends LinearOpMode {
         double side;
 
         double horizontal;
-        double vertical;
 
         waitForStart();
 
-        while (opModeIsActive())   {
-
+        while (opModeIsActive()) {
             forward = gamepad1.left_stick_y;
             rotate = gamepad1.right_stick_x;
             side = -gamepad1.left_stick_x;
-
             horizontal = gamepad2.right_stick_y;
 
-            LeftFront.setPower((forward - rotate + side)*speed);
-            LeftBack.setPower((forward - rotate - side)*speed);
-            RightFront.setPower((forward + rotate - side)*speed);
-            RightBack.setPower((forward + rotate + side)*speed);
+            // Движение робота
+            LeftFront.setPower((forward - rotate + side) * speed);
+            LeftBack.setPower((forward - rotate - side) * speed);
+            RightFront.setPower((forward + rotate - side) * speed);
+            RightBack.setPower((forward + rotate + side) * speed);
 
             Horizontal.setPower(horizontal * x);
 
-            if(gamepad1.right_bumper && !rbBefore){//change direction of the robot
-                rbBefore = true;
+            // Переключение направления
+            if (gamepad1.right_bumper && !rbBefore) {
                 speed = -speed;
             }
             rbBefore = gamepad1.right_bumper;
 
-            if(gamepad1.left_bumper && !lbBefore){//change speed of the robot
-                lbBefore = true;
-                if (speed == 0.4){
-                    speed = 0.8;
-                }
-                else{
-                    speed = 0.4;
-                }
+            // Переключение скорости
+            if (gamepad1.left_bumper && !lbBefore) {
+                speed = (speed == 0.4) ? 0.8 : 0.4;
             }
             lbBefore = gamepad1.left_bumper;
 
-            if (gamepad1.b && !b1Before){//change speed of the horizontal slider
-                if (x == 0.3){
-                    x = 0.7;
-                }
-                else{
-                    x = 0.3;
-                }
+            // Переключение скорости слайдера
+            if (gamepad1.b && !b1Before) {
+                x = (x == 0.3) ? 0.7 : 0.3;
             }
             b1Before = gamepad1.b;
 
-            if(gamepad2.dpad_right) {//middle of chambers
+            // Подъём вертикального слайдера
+            if (gamepad2.dpad_right) {
                 Vertical.setTargetPosition(middle_chamber);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
+                Vertical.setPower(-0.8);
             }
 
-            if(gamepad2.dpad_up) {//high chamber
+            if (gamepad2.dpad_up) {
                 Vertical.setTargetPosition(high_chamber);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
+                Vertical.setPower(-0.8);
             }
-
-            if(gamepad2.dpad_left) {//high basket
+            /*
+            if (gamepad2.dpad_left) {
                 Vertical.setTargetPosition(high_basket);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
             }
 
-            if(gamepad2.dpad_down) {//low basket
+            if (gamepad2.dpad_down) {
                 Vertical.setTargetPosition(low_basket);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.6);
+            }*/
 
-            }
-
-            if(gamepad2.left_bumper){//Slider in the Zero position
+            // Обнуление вертикального слайдера
+            if (gamepad2.left_bumper) {
                 while (opModeIsActive() && !touchSensor.isPressed()) {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(1);  // Keep moving down
+                    Vertical.setPower(1);
                 }
                 Vertical.setPower(0);
                 Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
-            telemetry.addData("Vertical Motor Position", Vertical.getCurrentPosition());
-            telemetry.update();
 
-            if(gamepad2.right_bumper) {//Preparing for taking specimen from observation zone
-                VerClaw.setPosition(verclaw_open);//open
+            // Специальная последовательность
+            if (gamepad2.right_bumper) {
+                VerClaw.setPosition(verclaw_open);
                 sleep(500);
-                VerClaw.setPosition(verclaw_close);//close
+                VerClaw.setPosition(verclaw_close);
                 sleep(500);
-                VerRotate.setPosition(verrotate_player);//rotate
+                VerRotate.setPosition(verrotate_player);
                 sleep(600);
                 VerClaw.setPosition(verclaw_open);
 
                 while (opModeIsActive() && !touchSensor.isPressed()) {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(1);  // Keep moving down
+                    Vertical.setPower(1);
                 }
 
                 Vertical.setPower(0);
-
                 Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -196,43 +192,36 @@ public class TeleOpAuto extends LinearOpMode {
                 sleep(870);
             }
 
-            if(gamepad2.y && !yBefore){//Control Vertical Claw
-                yBefore = true;
-                if(VerClaw.getPosition() == verclaw_close) {
-                    VerClaw.setPosition(verclaw_open);
-                }
-                else{
-                    VerClaw.setPosition(verclaw_close);
-                }
+            // Управление вертикальной клешнёй
+            if (gamepad2.y && !yBefore) {
+                verClawClosed = !verClawClosed;
+                VerClaw.setPosition(verClawClosed ? verclaw_close : verclaw_open);
             }
             yBefore = gamepad2.y;
 
-            if(gamepad2.a && !aBefore){//Control Vertical Rotate
-                aBefore = true;
-                if(VerRotate.getPosition() == verrotate_player) {
-                    VerRotate.setPosition(verrotate_chamber);
-                }
-                else{
-                    VerRotate.setPosition(verrotate_player);
-                }
+            // Управление вращением вертикальной клешни
+            if (gamepad2.a && !aBefore) {
+                verRotated = !verRotated;
+                VerRotate.setPosition(verRotated ? verrotate_chamber : verrotate_player);
             }
             aBefore = gamepad2.a;
 
-            if(gamepad2.x && !xBefore){//Control Horizontal Claw
-                xBefore = true;
-                if(HorClaw.getPosition() == horclaw_open) {
-                    HorClaw.setPosition(horclaw_close);
-                }
-                else{
-                    HorClaw.setPosition(horclaw_open);
-                }
+            // Управление горизонтальной клешнёй
+            if (gamepad2.x && !xBefore) {
+                horClawClosed = !horClawClosed;
+                HorClaw.setPosition(horClawClosed ? horclaw_close : horclaw_open);
             }
             xBefore = gamepad2.x;
 
-            if(gamepad2.b && !bBefore){//Control Horizontal Rotate
-                bBefore = true;
-                positionState = (positionState + 1) % 3; // циклическое переключение от 0 до 2
+            if (gamepad2.b && !bBefore) {
+                horRotated = !horRotated;
+                HorRotate.setPosition(horRotated ? horrotate_ground : horrotate_middle);
+            }
+            bBefore = gamepad2.b;
 
+            // Управление положением горизонтальной клешни
+            /*if (gamepad2.b && !bBefore) {
+                positionState = (positionState + 1) % 3;
                 switch (positionState) {
                     case 0:
                         HorRotate.setPosition(horrotate_ground);
@@ -241,12 +230,14 @@ public class TeleOpAuto extends LinearOpMode {
                         HorRotate.setPosition(horrotate_middle);
                         break;
                     case 2:
-                        HorRotate.setPosition(horrotate_transfer);
+                        HorRotate.setPosition(horrotate_lying);
                         break;
                 }
             }
-            bBefore = gamepad2.b;
-        }
+            bBefore = gamepad2.b;*/
 
+            telemetry.addData("Vertical Motor Position", Vertical.getCurrentPosition());
+            telemetry.update();
+        }
     }
 }
