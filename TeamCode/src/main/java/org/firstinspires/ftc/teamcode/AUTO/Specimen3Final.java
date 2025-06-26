@@ -104,7 +104,7 @@ public class Specimen3Final extends LinearOpMode {
         Thread driveSecond = new Thread(() -> {
             if (opModeIsActive()) driveStraight(-0.3, 15, contstant_angle, 0, 1, 0.05);
             safeSleep(50);
-            if (opModeIsActive()) driveSide(1, 145, contstant_angle, 500, 0.5, 0.05);
+            if (opModeIsActive()) driveSide(1, 137, contstant_angle, 500, 0.5, 0.05);
         });
         sliderZero1.start();
         driveSecond.start();
@@ -115,7 +115,7 @@ public class Specimen3Final extends LinearOpMode {
             Thread.currentThread().interrupt();
         }
 
-        horizontalForward(-600, -0.7);
+        horizontalForward(-800, -0.7);
         HorRotate.setPosition(horrotate_ground);
         safeSleep(500);
         HorClaw.setPosition(horclaw_close);
@@ -172,7 +172,7 @@ public class Specimen3Final extends LinearOpMode {
         Thread drive5 = new Thread(() -> {
             driveStraight(0.8, 7, contstant_angle, 0, 1, 0.05);
             driveSide(-0.8, 145, contstant_angle, 450, 0.7, 0.05);
-            driveStraight(0.8, 52, contstant_angle, 500, 0.5, 0.05);
+            driveStraight(0.8, 57, contstant_angle, 500, 0.5, 0.05);
         });
         sliderMiddle2.start();
         drive5.start();

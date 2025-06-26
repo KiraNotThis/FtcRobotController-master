@@ -10,11 +10,14 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous(name = "New Basket3", group = "Robot")
-public class NewBasket2 extends LinearOpMode {
+public class NewBasket3 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -43,6 +46,9 @@ public class NewBasket2 extends LinearOpMode {
         touchHorizontal = hardwareMap.get(TouchSensor.class, "sensor_touch_hor");
         touchVertical = hardwareMap.get(TouchSensor.class, "sensor_touch");
 
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "sensor_distance");
+
+
         VerRotate = hardwareMap.get(Servo.class, "Vertical Rotate");
         VerClaw = hardwareMap.get(Servo.class, "Vertical Claw");
         HorRotate = hardwareMap.get(Servo.class, "Horizontal Rotate");
@@ -63,7 +69,7 @@ public class NewBasket2 extends LinearOpMode {
 
         encoders();
         encodersVH();
-        while (!isStarted()) {
+        /*while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
         }
@@ -71,10 +77,18 @@ public class NewBasket2 extends LinearOpMode {
         while (opModeInInit()) {
             telemetry.addData("Currently at:", "%4.0f", getHeading());
             telemetry.update();
-        }
+        }*/
 
         waitForStart();
         double constant_angle = getHeading();//the first ideal zero of robot
+
+        /*horizontalForward(1100, 0.5);
+        VerClaw.setPosition(verclaw_close);
+        safeSleep(500);
+        HorClaw.setPosition(horclaw_open);
+        safeSleep(500);*/
+
+
 
         // Placing 1st sample
         Thread sliderBasket1 = new Thread(() -> {
@@ -108,7 +122,7 @@ public class NewBasket2 extends LinearOpMode {
         Thread driveSecond = new Thread(() -> {
             if (opModeIsActive()) driveStraight(0.5, way_basket, constant_angle, 0, 1, 0.05);
             if (opModeIsActive()) driveSide(0.5, way_sample_1, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) horizontalForward(sample, -0.5);
+
         });
 
         sliderZero1.start();
@@ -160,7 +174,6 @@ public class NewBasket2 extends LinearOpMode {
         Thread driveFourth = new Thread(() -> {
             if (opModeIsActive()) driveStraight(0.5, way_basket, constant_angle, 0, 1, 0.05);
             if (opModeIsActive()) driveSide(0.5, way_sample_2, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) horizontalForward(sample, -0.5);
         });
 
         sliderZero2.start();
@@ -202,18 +215,18 @@ public class NewBasket2 extends LinearOpMode {
 
         placingsample();
 
-
-
     }
 
     private void takingsample() {
+        horizontalForward(-400, -0.8);
         HorRotate.setPosition(horrotate_ground);
         safeSleep(500);
+        horizontal_by_distance(-0.8);
         HorClaw.setPosition(horclaw_close);
         safeSleep(500);
         HorRotate.setPosition(horrotate_transfer);
         safeSleep(500);
-        horizontalForward(transfer, 0.5);
+        horizontalForward(1250, 0.8);
     }
     private void safeSleep(long millis) {
         long endTime = System.currentTimeMillis() + millis;
@@ -384,6 +397,38 @@ public class NewBasket2 extends LinearOpMode {
         Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     //___________________________VerticalZero*_______________________________//
+    //___________________________HorizontalPosition*____________________________//
+    public void horizontal_by_distance(double power) {
+
+        // Двигаемся, пока расстояние больше 5 см
+        while (opModeIsActive() && distanceSensor.getDistance(DistanceUnit.CM) > 5.5) {
+            Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Horizontal.setPower(power);
+        }
+
+        // Останавливаем мотор
+        Horizontal.setPower(0);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Устанавливаем цель: ещё -300 тиков
+        Horizontal.setTargetPosition(-250);
+        Horizontal.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Horizontal.setPower(power);
+
+        // Ждём, пока мотор едет к цели
+        while (opModeIsActive() && Horizontal.isBusy()) {
+            // Можно добавить отладку:
+            // telemetry.addData("Current Pos", Horizontal.getCurrentPosition());
+            // telemetry.update();
+        }
+
+        // После достижения позиции — остановить мотор
+        Horizontal.setPower(0);
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+
+
 
     //___________________________HorizontalPosition*____________________________//
     public void horizontalForward(double position, double power) {

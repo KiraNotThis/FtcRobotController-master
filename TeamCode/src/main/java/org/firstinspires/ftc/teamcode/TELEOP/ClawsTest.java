@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-//@Disabled
+@Disabled
 @TeleOp(name="Claws Test", group="Robot")
 public class ClawsTest extends LinearOpMode {
     private DcMotor LeftFront = null;

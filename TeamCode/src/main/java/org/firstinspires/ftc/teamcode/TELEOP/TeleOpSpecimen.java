@@ -156,11 +156,8 @@ public class TeleOpSpecimen extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 VerClaw.setPosition(verclaw_open);
                 sleep(500);
-                VerClaw.setPosition(verclaw_close);
-                sleep(500);
                 VerRotate.setPosition(verrotate_player);
                 sleep(600);
-                VerClaw.setPosition(verclaw_open);
 
                 while (opModeIsActive() && !touchSensor.isPressed()) {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
