@@ -51,6 +51,7 @@ public class Globals {
     public static final int transfer = 1500;
     public static final int low_basket = -1000;
     public static final int way_basket = 20;
+    public static final int way_basket_3 = way_basket + 5;
     public static final int way_sample_1 = 6;
     public static final int way_sample_2 = 30;
 

@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -12,7 +13,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
+@Disabled
 @Autonomous(name = "3K Specimen", group = "Robot")
 public class Specimen3Final extends LinearOpMode {
 
@@ -91,13 +92,12 @@ public class Specimen3Final extends LinearOpMode {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
-// === STEP 2: PLACE FIRST SPECIMEN ===
+        // === STEP 2: PLACE FIRST SPECIMEN ===
         verticalUp(high_chamber, -1);
         VerClaw.setPosition(verclaw_open);
         safeSleep(500);
 
-// === STEP 3: GO FOR SAMPLE ===
+        // === STEP 3: GO FOR SAMPLE ===
         Thread sliderZero1 = new Thread(() -> {
             if (opModeIsActive()) verticalZero(1);
         });
@@ -186,8 +186,6 @@ public class Specimen3Final extends LinearOpMode {
         verticalUp(high_chamber, -1);
         VerClaw.setPosition(verclaw_open);
         safeSleep(500);
-        VerClaw.setPosition(verclaw_close);
-        safeSleep(500);
         VerRotate.setPosition(verrotate_player);
         safeSleep(500);
         VerClaw.setPosition(verclaw_open);
@@ -240,6 +238,8 @@ public class Specimen3Final extends LinearOpMode {
         driveSide(1, 80, contstant_angle, 5, 0.8, 0.05);
 
     }
+
+
 
     private void encoders() {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

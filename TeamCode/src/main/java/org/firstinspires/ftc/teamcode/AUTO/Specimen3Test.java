@@ -1,22 +1,43 @@
 package org.firstinspires.ftc.teamcode.AUTO;
 
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorClaw;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.HorRotate;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.Horizontal;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftBack;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.LeftFront;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.PULSES_PER_CM;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightBack;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.RightFront;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerClaw;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.VerRotate;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.Vertical;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.high_chamber;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.horclaw_close;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.horclaw_open;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.horrotate_ground;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.horrotate_middle;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.imu;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.middle_chamber;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchHorizontal;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.touchVertical;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.verclaw_close;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.verclaw_open;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.verrotate_chamber;
+import static org.firstinspires.ftc.teamcode.AUTO.Globals.verrotate_player;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
-@Disabled
-@Autonomous(name = "Passing Sample", group = "Robot")
-public class PassingSample extends LinearOpMode {
+@Autonomous(name = "3Specimen test", group = "Robot")
+public class Specimen3Test extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -31,6 +52,7 @@ public class PassingSample extends LinearOpMode {
         imu.initialize(parameters);
         imu.resetYaw();
         sleep(300);
+        //Define orientation of a robot
 
         // IMU settings
 
@@ -38,7 +60,6 @@ public class PassingSample extends LinearOpMode {
         LeftBack = hardwareMap.get(DcMotor.class, "left_back");
         RightFront = hardwareMap.get(DcMotor.class, "right_front");
         RightBack = hardwareMap.get(DcMotor.class, "right_back");
-
         Vertical = hardwareMap.get(DcMotor.class, "Vertical");
         Horizontal = hardwareMap.get(DcMotor.class, "Horizontal");
 
@@ -51,7 +72,7 @@ public class PassingSample extends LinearOpMode {
         HorClaw = hardwareMap.get(Servo.class, "Horizontal Claw");
 
         VerRotate.setPosition(verrotate_chamber);
-        VerClaw.setPosition(verclaw_open);
+        VerClaw.setPosition(verclaw_close);
         HorRotate.setPosition(horrotate_middle);
         HorClaw.setPosition(horclaw_open);
 
@@ -63,8 +84,8 @@ public class PassingSample extends LinearOpMode {
         Horizontal.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
 
-        encoders();
         encodersVH();
+        encoders();
         while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
@@ -76,61 +97,189 @@ public class PassingSample extends LinearOpMode {
         }
 
         waitForStart();
-        double constant_angle = getHeading();//the first ideal zero of robot
+        double contstant_angle = getHeading();//the first ideal zero of robot
 
-        horizontalForward(-1000, -0.8);
-        HorRotate.setPosition(horrotate_ground);
-        safeSleep(500);
-        HorClaw.setPosition(horclaw_close);
-        safeSleep(500);
-        HorRotate.setPosition(0.28);
-        safeSleep(500);
-        horizontalForward(550, 0.8);
-        VerClaw.setPosition(verclaw_close);
-        safeSleep(500);
-        HorClaw.setPosition(horclaw_open);
-        safeSleep(500);
-        VerRotate.setPosition(verrotate_player);
-        safeSleep(500);
+        way_to_chamber1(contstant_angle, 63, 0.45);
+        place_specimen();
 
+        go_for_sample(contstant_angle, 15, 1, 137, 0.5);
+
+        deliver_specimen(contstant_angle);
+        //going to the wall
+        driveStraight(-0.3, 9, contstant_angle, 0, 1, 0.05);
+        tacking_from_player();
+
+        way_to_chamber2(contstant_angle, 145, 0.7, 57, 0.5);
+        place_specimen();
+
+        way_to_player(contstant_angle);
+        tacking_from_player();
+
+        way_to_chamber3(contstant_angle, 97, 0.5, 65, 0.5);
+        place_specimen();
+
+// === STEP 8: PARKING ===
+        driveDiagonal(1, 95);
+        driveSide(1, 80, contstant_angle, 5, 0.8, 0.05);
 
     }
 
-    private void takingsample() {
-        HorRotate.setPosition(horrotate_ground);
-        safeSleep(500);
-        HorClaw.setPosition(horclaw_close);
-        safeSleep(500);
-        HorRotate.setPosition(horrotate_middle);
-        safeSleep(500);
-        horizontalForward(-sample, 0.5);
-    }
-    private void safeSleep(long millis) {
-        long endTime = System.currentTimeMillis() + millis;
-        while (opModeIsActive() && System.currentTimeMillis() < endTime) {
-            sleep(10);
+
+
+    private void way_to_player(double contstant_angle) {
+        Thread sliderZero2 = new Thread(() -> {
+            verticalZero(0.9);
+        });
+        Thread driveFourth = new Thread(() -> {
+            driveStraight(-1, 50, contstant_angle, 500, 0.5, 0.05);
+            driveSide(1, 100, contstant_angle, 500, 0.5, 0.05);
+            driveStraight(-0.3, 17, contstant_angle, 0, 1, 0.05);
+        });
+        sliderZero2.start();
+        driveFourth.start();
+        try {
+            sliderZero2.join();
+            driveFourth.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
 
-    private void placingsample() {
-        VerRotate.setPosition(verrotate_player);
-        safeSleep(800);
-        VerClaw.setPosition(verclaw_open);
-        safeSleep(500);
+    private void tacking_from_player() {
         VerClaw.setPosition(verclaw_close);
         safeSleep(500);
         VerRotate.setPosition(verrotate_chamber);
+    }
+
+    private void deliver_specimen(double contstant_angle) {
+        Thread horizontalForward1 = new Thread(() -> {
+            if (opModeIsActive()) horizontalForward(100, 0.7);
+            VerRotate.setPosition(verrotate_player);
+        });
+        Thread driveThird = new Thread(() -> {
+            if (opModeIsActive()) driveStraight(1, 105, contstant_angle - 135, 0, 0.9, 0.05);
+        });
+        horizontalForward1.start();
+        driveThird.start();
+        try {
+            horizontalForward1.join();
+            driveThird.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        HorClaw.setPosition(horclaw_open);
+        safeSleep(500);
+
+        Thread rotate = new Thread(() -> {
+            HorRotate.setPosition(horrotate_middle);
+            horizontalForward(450, 0.7);
+        });
+        Thread drive4 = new Thread(() -> {
+            driveStraight(-1, 10, contstant_angle - 135, 0, 1, 0.05);
+            driveStraight(-1, 95, contstant_angle, 0, 1, 0.05);
+        });
+        rotate.start();
+        drive4.start();
+        try {
+            rotate.join();
+            drive4.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void go_for_sample(double contstant_angle, double distance_backwards, double slowFactorBack, double distance_side, double slowFactorSide) {
+        Thread sliderZero1 = new Thread(() -> {
+            if (opModeIsActive()) verticalZero(1);
+        });
+        Thread driveSecond = new Thread(() -> {
+            if (opModeIsActive()) driveStraight(-0.3, distance_backwards, contstant_angle, 0, slowFactorBack, 0.05);
+            safeSleep(50);
+            if (opModeIsActive()) driveSide(1, distance_side, contstant_angle, 500, slowFactorSide, 0.05);
+        });
+        sliderZero1.start();
+        driveSecond.start();
+        try {
+            sliderZero1.join();
+            driveSecond.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        horizontalForward(-800, -0.7);
+        HorRotate.setPosition(horrotate_ground);
+        safeSleep(500);
+        HorClaw.setPosition(horclaw_close);
+        safeSleep(500);
+        HorRotate.setPosition(0.74);
         safeSleep(500);
     }
 
-    private void encodersVH() {
-        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    private void place_specimen() {
+        verticalUp(high_chamber, -1);
+        VerClaw.setPosition(verclaw_open);
+        safeSleep(500);
+        VerRotate.setPosition(verrotate_player);
+        safeSleep(500);
     }
+
+    private void way_to_chamber1(double contstant_angle, double distance, double slowdownFactor) {
+        Thread sliderMiddle1 = new Thread(() -> {
+            if (opModeIsActive()) verticalUp(middle_chamber, -0.9);
+        });
+        Thread driveFirst = new Thread(() -> {
+            if (opModeIsActive()) driveStraight(1, distance, contstant_angle, 500, slowdownFactor, 0.05);
+        });
+        sliderMiddle1.start();
+        driveFirst.start();
+        try {
+            sliderMiddle1.join();
+            driveFirst.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void way_to_chamber2(double contstant_angle, double distance_side, double slowdownFactor_side, double distance_forward, double slowdownFactor_forward) {
+        Thread sliderMiddle2 = new Thread(() -> {
+            verticalUp(middle_chamber, -1);
+        });
+        Thread drive5 = new Thread(() -> {
+            driveStraight(0.8, 7, contstant_angle, 0, 1, 0.05);
+            driveSide(-0.8, distance_side, contstant_angle, 450, slowdownFactor_side, 0.05);
+            driveStraight(0.8, distance_forward, contstant_angle, 500, slowdownFactor_forward, 0.05);
+        });
+        sliderMiddle2.start();
+        drive5.start();
+        try {
+            sliderMiddle2.join();
+            drive5.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+    private void way_to_chamber3(double contstant_angle, double distance_side, double slowdownFactor_side, double distance_forward, double slowdownFactor_forward) {
+        Thread sliderMiddle3 = new Thread(() -> {
+            verticalUp(middle_chamber, -0.9);
+        });
+        Thread driveFifth = new Thread(() -> {
+            driveStraight(1, 7, contstant_angle, 0, 0.5, 0.05);
+            driveSide(-1, 97, contstant_angle, 500, 0.5, 0.05);
+            driveStraight(1, 65, contstant_angle, 500, 0.5, 0.05);
+        });
+        sliderMiddle3.start();
+        driveFifth.start();
+        try {
+            sliderMiddle3.join();
+            driveFifth.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
     private void encoders() {
         LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -142,7 +291,20 @@ public class PassingSample extends LinearOpMode {
         RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    private void encodersVH() {
+        Horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        Horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    private void safeSleep(long millis) {
+        long endTime = System.currentTimeMillis() + millis;
+        while (opModeIsActive() && System.currentTimeMillis() < endTime) {
+            sleep(10);
+        }
+    }
     //______________________________*Straight_________________________________//
 
     /**
@@ -244,6 +406,47 @@ public class PassingSample extends LinearOpMode {
         movestop();
     }
     //______________________________Side*_____________________________________//
+
+    //___________________________*Diagonal____________________________________//
+
+    public void driveDiagonal(double driveSpeed, double distance) {
+        encoders();
+
+        int targetTicks = (int) (PULSES_PER_CM * distance);
+
+        double slowdownStart = targetTicks * 0.7;
+
+        while (opModeIsActive() && Math.abs(RightFront.getCurrentPosition()) < targetTicks) {
+            int currentTicks = Math.abs(RightFront.getCurrentPosition());
+            double slowdownFactor = 1.0;
+
+            if (currentTicks > slowdownStart) {
+                slowdownFactor = Math.max(0.2, 1.0 - ((currentTicks - slowdownStart) / (targetTicks - slowdownStart)));
+            }
+
+            double adjustedSpeed = driveSpeed * slowdownFactor;
+
+            telemetry.addData("Position", "%5d / %5d", currentTicks, targetTicks);
+            telemetry.addData("Speed Factor", "%.2f", slowdownFactor);
+            telemetry.update();
+
+            LeftFront.setPower(0);
+            LeftBack.setPower(-adjustedSpeed);
+            RightFront.setPower(-adjustedSpeed);
+            RightBack.setPower(0);
+        }
+
+        LeftBack.setPower(-0.05);
+        RightFront.setPower(-0.05);
+
+        sleep(200);
+
+        LeftFront.setPower(0);
+        LeftBack.setPower(0);
+        RightFront.setPower(0);
+        RightBack.setPower(0);
+    }
+    //___________________________Diagonal*____________________________________//
 
 
     //___________________________VerticalPosition*____________________________//

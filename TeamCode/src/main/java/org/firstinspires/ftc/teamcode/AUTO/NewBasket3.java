@@ -72,12 +72,14 @@ public class NewBasket3 extends LinearOpMode {
         /*while (!isStarted()) {
             telemetry.addData("IMU Heading", "%.2f", getHeading());
             telemetry.update();
-        }
+        }*/
 
         while (opModeInInit()) {
-            telemetry.addData("Currently at:", "%4.0f", getHeading());
+            double distance = distanceSensor.getDistance(DistanceUnit.CM);
+            telemetry.addData("Distance (cm)", "%.2f", distance);
             telemetry.update();
-        }*/
+        }
+
 
         waitForStart();
         double constant_angle = getHeading();//the first ideal zero of robot
@@ -200,7 +202,7 @@ public class NewBasket3 extends LinearOpMode {
         //Placing 3rd sample in the basket
         Thread driveFifth = new Thread(() -> {
             if (opModeIsActive()) driveSide(-0.5, way_sample_2 + 5, constant_angle, 0, 1, 0.05);
-            if (opModeIsActive()) driveStraight(-0.5, way_basket, constant_angle, 0, 1, 0.05);
+            if (opModeIsActive()) driveStraight(-0.5, way_basket_3, constant_angle, 0, 1, 0.05);
         });
 
         sliderBasket3.start();
@@ -226,7 +228,7 @@ public class NewBasket3 extends LinearOpMode {
         safeSleep(500);
         HorRotate.setPosition(horrotate_transfer);
         safeSleep(500);
-        horizontalForward(1250, 0.8);
+        horizontalForward(1150, 0.8);
     }
     private void safeSleep(long millis) {
         long endTime = System.currentTimeMillis() + millis;

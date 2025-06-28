@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import static org.firstinspires.ftc.teamcode.AUTO.Globals.*;
 
+
 @TeleOp(name = "TeleOp Specimen", group = "Robot")
 public class TeleOpSpecimen extends LinearOpMode {
+
     private DcMotor LeftFront = null;
     private DcMotor LeftBack = null;
     private DcMotor RightFront = null;
@@ -97,6 +99,7 @@ public class TeleOpSpecimen extends LinearOpMode {
             RightFront.setPower((forward + rotate - side) * speed);
             RightBack.setPower((forward + rotate + side) * speed);
 
+            // Горизонтальный слайдер
             Horizontal.setPower(horizontal * x);
 
             // Переключение направления
@@ -129,64 +132,69 @@ public class TeleOpSpecimen extends LinearOpMode {
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.8);
             }
-            /*
-            if (gamepad2.dpad_left) {
-                Vertical.setTargetPosition(high_basket);
-                Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
-            }
-
-            if (gamepad2.dpad_down) {
-                Vertical.setTargetPosition(low_basket);
-                Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Vertical.setPower(-0.6);
-            }*/
 
             // Обнуление вертикального слайдера
             if (gamepad2.left_bumper) {
-                while (opModeIsActive() && !touchSensor.isPressed()) {
+                Thread resetThread = new Thread(() -> {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(1);
-                }
-                Vertical.setPower(0);
-                Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    while (opModeIsActive() && !touchSensor.isPressed()) {
+                        Vertical.setPower(1);
+                    }
+                    Vertical.setPower(0);
+                    Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                });
+                resetThread.start();
             }
 
-            // Специальная последовательность
+            // Специальная последовательность — В ОТДЕЛЬНОМ ПОТОКЕ!
             if (gamepad2.right_bumper) {
-                VerClaw.setPosition(verclaw_open);
-                sleep(500);
-                VerRotate.setPosition(verrotate_player);
-                sleep(600);
+                Thread sequenceThread = new Thread(() -> {
+                    VerClaw.setPosition(verclaw_open);
+                    sleep(500);
+                    VerRotate.setPosition(verrotate_player);
+                    sleep(600);
 
-                while (opModeIsActive() && !touchSensor.isPressed()) {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Vertical.setPower(1);
-                }
+                    while (opModeIsActive() && !touchSensor.isPressed()) {
+                        Vertical.setPower(1);
+                    }
 
-                Vertical.setPower(0);
-                Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    Vertical.setPower(0);
+                    Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    // Сброс энкодеров шасси
+                    /*LeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    LeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    RightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    RightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                LeftFront.setPower(0.8);
-                LeftBack.setPower(0.8);
-                RightFront.setPower(0.8);
-                RightBack.setPower(0.8);
-                sleep(650);
+                    // Включение в RUN_USING_ENCODER
+                    LeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    LeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    RightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    RightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                LeftFront.setPower(-0.8);
-                LeftBack.setPower(0.8);
-                RightFront.setPower(0.8);
-                RightBack.setPower(-0.8);
-                sleep(870);
+                    // Движение вперёд
+                    LeftFront.setPower(0.8);
+                    LeftBack.setPower(0.8);
+                    RightFront.setPower(0.8);
+                    RightBack.setPower(0.8);
+                    sleep(650);
+
+                    // Разворот
+                    LeftFront.setPower(-0.8);
+                    LeftBack.setPower(0.8);
+                    RightFront.setPower(0.8);
+                    RightBack.setPower(-0.8);
+                    sleep(870);
+
+                    // Стоп
+                    LeftFront.setPower(0);
+                    LeftBack.setPower(0);
+                    RightFront.setPower(0);
+                    RightBack.setPower(0);*/
+                });
+                sequenceThread.start();
             }
 
             // Управление вертикальной клешнёй
@@ -215,23 +223,6 @@ public class TeleOpSpecimen extends LinearOpMode {
                 HorRotate.setPosition(horRotated ? horrotate_ground : horrotate_middle);
             }
             bBefore = gamepad2.b;
-
-            // Управление положением горизонтальной клешни
-            /*if (gamepad2.b && !bBefore) {
-                positionState = (positionState + 1) % 3;
-                switch (positionState) {
-                    case 0:
-                        HorRotate.setPosition(horrotate_ground);
-                        break;
-                    case 1:
-                        HorRotate.setPosition(horrotate_middle);
-                        break;
-                    case 2:
-                        HorRotate.setPosition(horrotate_lying);
-                        break;
-                }
-            }
-            bBefore = gamepad2.b;*/
 
             telemetry.addData("Vertical Motor Position", Vertical.getCurrentPosition());
             telemetry.update();
