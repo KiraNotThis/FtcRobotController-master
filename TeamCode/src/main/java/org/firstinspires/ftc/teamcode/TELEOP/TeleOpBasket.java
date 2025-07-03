@@ -63,7 +63,7 @@ public class TeleOpBasket extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // ===== Движение =====
+            // DRIVING
             double forward = gamepad1.left_stick_y;
             double rotate = gamepad1.right_stick_x;
             double side = -gamepad1.left_stick_x;
@@ -76,7 +76,6 @@ public class TeleOpBasket extends LinearOpMode {
 
             Horizontal.setPower(horizontal * x);
 
-            // ===== Переключения =====
             if (gamepad1.right_bumper && !rbBefore) speed = -speed;
             rbBefore = gamepad1.right_bumper;
 
@@ -86,7 +85,6 @@ public class TeleOpBasket extends LinearOpMode {
             if (gamepad1.b && !b1Before) x = (x == 0.3) ? 0.7 : 0.3;
             b1Before = gamepad1.b;
 
-            // ===== Вертикальный слайдер =====
             if (gamepad2.dpad_right) {
                 Vertical.setTargetPosition(low_basket);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -99,7 +97,7 @@ public class TeleOpBasket extends LinearOpMode {
                 Vertical.setPower(-0.8);
             }
 
-            // ===== Обнуление вертикального слайдера =====
+            // MAGIC BUTTON ZERO
             if (gamepad2.left_bumper) {
                 VerClaw.setPosition(verclaw_open);
                 VerRotate.setPosition(verrotate_chamber);
@@ -112,7 +110,7 @@ public class TeleOpBasket extends LinearOpMode {
                 }
             }
 
-            // ===== Специальная последовательность =====
+            // MAGIC BUTTON
             if (gamepad2.right_bumper && !specialSeqActive) {
                 specialSeqActive = true;
                 seqState = SpecialSeqState.STEP1;
@@ -150,7 +148,7 @@ public class TeleOpBasket extends LinearOpMode {
                 }
             }
 
-            // ===== Клешни =====
+            // CLAWS
             if (gamepad2.y && !yBefore) {
                 verClawClosed = !verClawClosed;
                 VerClaw.setPosition(verClawClosed ? verclaw_close : verclaw_open);

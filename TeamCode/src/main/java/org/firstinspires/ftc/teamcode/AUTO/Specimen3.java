@@ -36,8 +36,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name = "3Specimen test", group = "Robot")
-public class Specimen3Test extends LinearOpMode {
+@Autonomous(name = "Specimen Calibration", group = "Robot")
+public class Specimen3 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -118,7 +118,7 @@ public class Specimen3Test extends LinearOpMode {
         way_to_chamber3(contstant_angle, 97, 0.5, 65, 0.5);
         place_specimen();
 
-// === STEP 8: PARKING ===
+        //PARKING
         driveDiagonal(1, 95);
         driveSide(1, 80, contstant_angle, 5, 0.8, 0.05);
 

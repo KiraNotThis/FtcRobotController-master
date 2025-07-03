@@ -16,8 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Autonomous(name = "New Basket3", group = "Robot")
-public class NewBasket3 extends LinearOpMode {
+@Autonomous(name = "Basket 3", group = "Robot")
+public class Basket3 extends LinearOpMode {
 
     @Override
     public void runOpMode() {

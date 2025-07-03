@@ -27,7 +27,7 @@ public class TeleOpSpecimen extends LinearOpMode {
 
     private TouchSensor touchSensor;
 
-    // Кнопки
+    // BUTTONS
     boolean aBefore = false;
     boolean bBefore = false;
     boolean xBefore = false;
@@ -36,12 +36,12 @@ public class TeleOpSpecimen extends LinearOpMode {
     boolean lbBefore = false;
     boolean rbBefore = false;
 
-    // Логика
+    // SPEED
     double x = 0.7;
     double speed = 0.8;
     int positionState = 0;
 
-    // Флаги состояния
+    // FLAGS
     boolean horClawClosed = false;
     boolean verClawClosed = false;
     boolean verRotated = false;
@@ -93,47 +93,48 @@ public class TeleOpSpecimen extends LinearOpMode {
             side = -gamepad1.left_stick_x;
             horizontal = gamepad2.right_stick_y;
 
-            // Движение робота
+            // DRIVING
             LeftFront.setPower((forward - rotate + side) * speed);
             LeftBack.setPower((forward - rotate - side) * speed);
             RightFront.setPower((forward + rotate - side) * speed);
             RightBack.setPower((forward + rotate + side) * speed);
 
-            // Горизонтальный слайдер
+            // HORIZONTAL SLIDER
             Horizontal.setPower(horizontal * x);
 
-            // Переключение направления
+            // CHANGING DIRECTION
             if (gamepad1.right_bumper && !rbBefore) {
                 speed = -speed;
             }
             rbBefore = gamepad1.right_bumper;
 
-            // Переключение скорости
+            // CHANGING SPEED
             if (gamepad1.left_bumper && !lbBefore) {
                 speed = (speed == 0.4) ? 0.8 : 0.4;
             }
             lbBefore = gamepad1.left_bumper;
 
-            // Переключение скорости слайдера
+            // CHANGING SPEED OF SLIDER
             if (gamepad1.b && !b1Before) {
                 x = (x == 0.3) ? 0.7 : 0.3;
             }
             b1Before = gamepad1.b;
 
-            // Подъём вертикального слайдера
+            // VERTICAL : MIDDLE CHAMBER
             if (gamepad2.dpad_right) {
                 Vertical.setTargetPosition(middle_chamber);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.8);
             }
 
+            // VERTICAL : HIGH CHAMBER
             if (gamepad2.dpad_up) {
                 Vertical.setTargetPosition(high_chamber);
                 Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Vertical.setPower(-0.8);
             }
 
-            // Обнуление вертикального слайдера
+            // VERTICAL : ZERO POSITION
             if (gamepad2.left_bumper) {
                 Thread resetThread = new Thread(() -> {
                     Vertical.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -146,7 +147,7 @@ public class TeleOpSpecimen extends LinearOpMode {
                 resetThread.start();
             }
 
-            // Специальная последовательность — В ОТДЕЛЬНОМ ПОТОКЕ!
+            // MAGIC BUTTON
             if (gamepad2.right_bumper) {
                 Thread sequenceThread = new Thread(() -> {
                     VerClaw.setPosition(verclaw_open);
@@ -197,27 +198,28 @@ public class TeleOpSpecimen extends LinearOpMode {
                 sequenceThread.start();
             }
 
-            // Управление вертикальной клешнёй
+            // VERTICAL CLAW
             if (gamepad2.y && !yBefore) {
                 verClawClosed = !verClawClosed;
                 VerClaw.setPosition(verClawClosed ? verclaw_close : verclaw_open);
             }
             yBefore = gamepad2.y;
 
-            // Управление вращением вертикальной клешни
+            // VERTICAL ROTATE
             if (gamepad2.a && !aBefore) {
                 verRotated = !verRotated;
                 VerRotate.setPosition(verRotated ? verrotate_chamber : verrotate_player);
             }
             aBefore = gamepad2.a;
 
-            // Управление горизонтальной клешнёй
+            // HORIZONTAL CLAW
             if (gamepad2.x && !xBefore) {
                 horClawClosed = !horClawClosed;
                 HorClaw.setPosition(horClawClosed ? horclaw_close : horclaw_open);
             }
             xBefore = gamepad2.x;
 
+            // HORIZONTAL ROTATE
             if (gamepad2.b && !bBefore) {
                 horRotated = !horRotated;
                 HorRotate.setPosition(horRotated ? horrotate_ground : horrotate_middle);
